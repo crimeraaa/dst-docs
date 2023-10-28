@@ -1,0 +1,30 @@
+{
+    "Lua.diagnostics.enable": true,
+    "Lua.diagnostics.disable": [
+        "lowercase-global",
+        // "param-type-mismatch",
+        // "undefined-global",
+        // "undefined-field",
+        "need-check-nil",
+        // "assign-type-mismatch",
+        "trailing-space"
+    ],
+    // See: https://forums.kleientertainment.com/forums/topic/126774-documentation-list-of-all-engine-functions/
+    // Credit to Hornet, obviously!
+    "Lua.diagnostics.globals": [
+        // DST MOD ENV
+        "GLOBAL",
+        "AddAction",
+        "AddComponentPostInit",
+        "AddPrefabPostInit",
+        "AddPrefabPostInitAny",
+        "AddPlayerPostInit",
+
+        // === NOT DOCUMENTED BY HORNET ========================================
+        // See: https://forums.kleientertainment.com/forums/topic/126774-documentation-list-of-all-engine-functions/?do=findComment&comment=1477045
+        "MapExplorer",
+        "Label",
+        "Minimap",
+    ],
+    "Lua.diagnostics.workspaceDelay": -1
+}
