@@ -1,0 +1,44 @@
+Debug Information for "printf":
+	nups            -- 0
+	what            -- "Lua"
+	func            -- function: 00B3BEC8
+	lastlinedefined -- 6
+	source          -- "@.\debuginfo-test.lua"
+	currentline     -- -1
+	namewhat        -- ""
+	linedefined     -- 4
+	short_src       -- ".\debuginfo-test.lua"
+
+Debug Information for "get_string":
+	nups            -- 1
+	what            -- "Lua"
+	func            -- function: 00B3BD88
+	lastlinedefined -- 27
+	source          -- "@.\debuginfo-test.lua"
+	currentline     -- -1
+	namewhat        -- ""
+	linedefined     -- 12
+	short_src       -- ".\debuginfo-test.lua"
+
+Debug Information for "print":
+	nups            -- 0
+	what            -- "C"
+	func            -- function: 00B37390
+	lastlinedefined -- -1
+	source          -- "=[C]"
+	currentline     -- -1
+	namewhat        -- ""
+	linedefined     -- -1
+	short_src       -- "[C]"
+
+Debug Information for "type":
+	nups            -- 0
+	what            -- "C"
+	func            -- function: 00B37490
+	lastlinedefined -- -1
+	source          -- "=[C]"
+	currentline     -- -1
+	namewhat        -- ""
+	linedefined     -- -1
+	short_src       -- "[C]"
+
