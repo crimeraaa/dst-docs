@@ -6,7 +6,11 @@ Entity = {
     AddFollower = function(...) end,
     AddAnimState = function(...) end,
     GetHistoryData = function(...) end,
-    AddVideoWidget = function(...) end,
+
+    -- I dunno what this does but I do know if only takes a `self` parameter.
+    -- see `scripts/video.lua`.
+    AddVideoWidget = function(self)
+    end,
     RemoveTag = function(...) end,
     Show = function(...) end,
     SetParent = function(...) end,
@@ -65,7 +69,12 @@ Entity = {
     CallPrefabConstructionComplete = function(...) end,
     AddShadowManager = function(...) end,
     SetInLimbo = function(...) end,
-    GetGUID = function(...) end,
+
+    -- Returns the GUID of the caller.
+    -- TODO Determine if GUID is a number or a string.
+    GetGUID = function(self, ...) 
+        return 0
+    end,
     MoveToFront = function(...) end,
     AddImage = function(...) end,
     AddAccountManager = function(...) end,

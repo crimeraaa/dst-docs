@@ -1,3 +1,5 @@
+-- TODO determine if the one starting with `The` is the correct one to reference.
+
 TheInputProxy = {
     GetInputDeviceCount = function(...) end,
     GetInputDeviceName = function(...) end,

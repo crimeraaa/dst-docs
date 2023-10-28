@@ -1,4 +1,37 @@
 TheSim = {
+    -- Only referenced in the Lua sided `CreateEntity` function in `main.lua`.
+    -- We see a reference to `ent:GetGUID` is only found in the C facing `Entity` table.
+    -- So perhaps there's metatable business (faux inheritance).
+    -- TODO: Figre out if all DST entities have one giant common metatable.
+    ---@param self table `TheSim` itself. Called via colon notation.
+    CreateEntity = function(self)
+        return setmetatable({}, Entity)
+    end,
+
+    -- Returns a list of mod names. Probably as strings?
+    -- I think these are of ALL installed mods, both local and workshop.
+    ---@return string[]
+    GetModDirectoryNames = function(...) 
+        return {}
+    end,
+
+    -- Returns a table of currently loaded entities.
+    -- Use colon notation rather than dots, e.g. `TheSim:FindEntities(x, y, z, radius)`,
+    -- as you need to pass `TheSim` itself as the first parameter so colons help you
+    -- do that implicitly rather than needing `TheSim.FindEntities(TheSim, x, y, z, radius)`.
+    ---@param x number 
+    ---@param y number 
+    ---@param z number
+    ---@param radius number Up to how far to check for loaded entites.
+    ---@param tags? string[] Only count entities that contain these tags?
+    ---@return table
+    FindEntities = function(self, x, y, z, radius, tags) 
+        return {} 
+    end,
+
+    -------- UNDOCUMENTED ------------------------------------------------------
+    -- TODO: you know, actually document these...
+
     GetSoundVolume = function(...) end,
     SetMOTDTarget = function(...) end,
     ClearDSP = function(...) end,
@@ -24,19 +57,6 @@ TheSim = {
     LoadKlumpString = function(...) end,
     GetAmbientColour = function(...) end,
     DuplicateSlot = function(...) end,
-
-    -- Returns a table of currently loaded entities within a radius of given coordinates.
-    -- Use colon notation rather than dots, e.g. `TheSim:FindEntities(x, y, z, radius)`,
-    -- as you need to pass `TheSim` itself as the first parameter so colons help you
-    -- do that implicitly rather than eeding `TheSim.FindEntities(TheSim, x, y, z, radius)`.
-    ---@param x number
-    ---@param y number
-    ---@param z number
-    ---@param radius number
-    ---@return table
-    FindEntities = function(self, x, y, z, radius) 
-        return {} 
-    end,
 
     PrintTextureInfo = function(...) end,
     ToggleDebugTexture = function(...) end,
@@ -110,7 +130,6 @@ TheSim = {
     ToggleFrameProfiler = function(...) end,
     GetNumberOfEntities = function(...) end,
     QueryServer = function(...) end,
-    CreateEntity = function(...) end,
     RegisterPrefab = function(...) end,
     StashPlayInstance = function(...) end,
     SetPersistentString = function(...) end,
@@ -199,14 +218,6 @@ TheSim = {
     OnAssetPathResolve = function(...) end,
     VerifyFileExistsAsync = function(...) end,
     RequestPlayerID = function(...) end,
-
-    -- Returns a list of mod names. Probably as strings?
-    -- I think these are of ALL installed mods, both local and workshop.
-    ---@return string[]
-    GetModDirectoryNames = function(...) 
-        return {}
-    end,
-
     SetDebugCameraTarget = function(...) end,
     GetStaticTick = function(...) end,
     SetMemoryTracking = function(...) end,

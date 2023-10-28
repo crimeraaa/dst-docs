@@ -1,3 +1,8 @@
+-- This file contains not just the `Map` table, but also:
+-- `MapExplorer`
+-- `MapGenSim`
+-- `MapLayerManager`
+
 Map = {
     SetMinimapOceanEdgeColor0 = function(...) end,
     CanTillSoilAtPoint = function(...) print('scripts/components/map.lua:163') end,
@@ -116,4 +121,38 @@ Map = {
     IsGroundTargetBlocked = function(...) print('scripts/components/map.lua:183') end,
     IsPointNearHole = function(...) print('scripts/components/map.lua:168') end,
     CanPlacePrefabFilteredAtPoint = function(...) print('scripts/components/map.lua:374') end
+}
+
+MapExplorer = {
+    RecordMap = function(...) end,
+    ActivateLocalMiniMap = function(...) end,
+    IsTileSeeable = function(...) end,
+    IsTileVisited = function(...) end,
+    EnableUpdate = function(...) end,
+    DeactivateLocalMiniMap = function(...) end,
+    RevealArea = function(...) end,
+    RecordAllMaps = function(...) end,
+    LearnAllMaps = function(...) end,
+    LearnRecordedMap = function(...) end
+}
+
+MapGenSim = {
+    DestroyWorld = function(...) end,
+    CreateBox = function(...) end,
+    CreateCircle = function(...) end,
+    UpdateSim = function(...) end,
+    GetNodePosition = function(...) end,
+    CreateWorld = function(...) end,
+    CreateConstraint = function(...) end,
+    GetMinimumRadius = function(...) end
+}
+
+MapLayerManager = {
+    SetPrimaryColor = function(...) end,
+    SetSecondaryColor = function(...) end,
+    CreateRenderLayer = function(...) end,
+    SetSampleStyle = function(...) end,
+    SetMinimapColor = function(...) end,
+    SetSecondaryColorDusk = function(...) end,
+    ReleaseRenderLayer = function(...) end
 }

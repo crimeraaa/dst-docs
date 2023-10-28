@@ -1,4 +1,9 @@
 TheNet = {
+    -- See `c_netstats()` defined in `scripts/consolecommands.lua` for sample usage.
+    -- Other than that, I have no idea what this does.
+    GetNetworkStatistics = function(self) 
+        return {}
+    end,
     GetServerLANOnly = function(...) end,
     SetAllowNewPlayersToConnect = function(...) end,
     SetIsWorldSaving = function(...) end,
@@ -177,7 +182,6 @@ TheNet = {
     Ban = function(...) print('../mods/workshop-1290774114/modmain.lua:111') end,
     LeaveParty = function(...) end,
     SendWorldRollbackRequestToServer = function(...) end,
-    GetNetworkStatistics = function(...) end,
     GetServerListing = function(...) end,
     IsNetOverlayEnabled = function(...) end,
     GetDefaultClanID = function(...) end,

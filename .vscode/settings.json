@@ -18,13 +18,23 @@
         "AddComponentPostInit",
         "AddPrefabPostInit",
         "AddPrefabPostInitAny",
-        "AddPlayerPostInit",
-
-        // === NOT DOCUMENTED BY HORNET ========================================
-        // See: https://forums.kleientertainment.com/forums/topic/126774-documentation-list-of-all-engine-functions/?do=findComment&comment=1477045
-        "MapExplorer",
-        "Label",
-        "Minimap",
+        "AddPlayerPostInit"
     ],
-    "Lua.diagnostics.workspaceDelay": -1
+    "Lua.diagnostics.workspaceDelay": -1,
+    "Lua.completion.autoRequire": true,
+    "Lua.codeLens.enable": true,
+    // DST uses the forward slash so I'll opt to use it too for consistency.
+    "Lua.completion.requireSeparator": "/",
+    "Lua.diagnostics.libraryFiles": "Opened",
+    "Lua.hint.arrayIndex": "Enable",
+    "Lua.runtime.pathStrict": false,
+    "Lua.runtime.path": [
+        "?.lua",
+        "?/init.lua",
+    ],
+    // Need this so we can have good syntax highlighting.
+    "Lua.workspace.library": [
+        "scripts/",
+        "engine/"
+    ]
 }

@@ -1,6 +1,3 @@
--- NOTE: This filename isn't a type. It's meant to contain all tables
--- that start with "net_" specifically.
-
 net_byte = {
     value = function(...) end, 
     set_local = function(...) end, 

@@ -1,8 +1,7 @@
 -- `GLOBAL` is a DST mod env specific thing, but it basically refers to `_G`.
 GLOBAL = _G
 
--- Searchpath is `dst_gamescripts\?.lua` for syntax highlighting!
-require("class")
+-- Searchpath is `scripts\?.lua` for syntax highlighting!
 require("modutil")
 require("prefabs")
 

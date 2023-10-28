@@ -43,3 +43,10 @@ Physics = {
     GetRadius = function(...) end,
     SetActive = function(...) end
 }
+
+PhysicsWaker = {
+    StartWakeTests = function(...) end,
+    StopWakeTests = function(...) end,
+    SetTimeBetweenWakeTests = function(...) end,
+    SetMaxPhysicsRadius = function(...) end
+}
