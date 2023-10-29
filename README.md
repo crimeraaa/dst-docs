@@ -36,37 +36,109 @@ local info = {
 
 Of interest to us are the `source`, `what` and `short_src` fields. For more information please see [Programming in Lua: 23.1&mdash;Introspective Facilities.](https://www.lua.org/pil/23.1.html)
 
+# Cloning/Forking
+
+1. Cloning the repo from the **command line**
+    1. Make sure you have `git` installed. For Windows, you may need to install Git Bash or Git for Windows.
+    2. Start your terminal of choice, like `cmd`, `powershell`, `bash`, etc.
+    3. `cd` to your folder where you want the repo's folder to reside. For example, in my Windows user folder, I have a folder called `repos/`.
+    
+            > cd C:\Users\crimeraaa\repos
+            C:\Users\crimeraaa\repos>
+
+    4. Run this command:
+
+            > git clone https://github.com/crimeraaa/dst-docs.git
+
+    5. Your current working directory should now have a folder called `dst-docs/` inside it.
+    6. **(Optional):** If you want the contents of `dst_gamescripts` alongside this repo, first run this command:
+
+            > git submodule init
+
+    7. **(Continued):** If you want the *full* contents of `dst_gamescripts`, as in the full commit history and all (~500 MB at the time of writing!), simply run this command:
+
+            > git submodule update
+
+    8. **(Continued):** If you *don't* want the full contents I don't blame you. You may run this command instead:
+
+            > git submodule update --depth 1
+
+        You may also replace `1` with any value you like. This just tells `git`` up to how far down the most recent commit history it should retrieve.
+    9. If you did all that you wanted to, you should be able to open this folder in your favorite code editor/IDE and get to work!
+
+2. Cloning the repo using **GitHub desktop**
+    1. Go to `File -> Clone Repository -> URL`.
+    2. Paste `https://github.com/crimeraaa/dst-docs.git` in the *URL* textbox.
+    3. **(Optional):** change the location contained in *Local path* textbox.
+        - e.g. instead of `C:\Users\crimeraaa\Documents\Github\dst-docs`,
+        I can put: `C:\Users\crimeraaa\repos\dst-docs`.
+    4. Click `Clone` and wait. This will automatically retrieve the contents of the `dst_gamescripts` repo, which is *massive*.
+    5. Open this folder in your favorite code editor/IDE and get to work!
+
+### Visual Studio Code setup
+
+When cloning/forking this repo, you'll actually get a copy of the `settings.json` file I'm using at the moment. It already has a bunch of settings needed to allow for annotations/completion, but be warned the the sheer number of scripts will eat quite a bit of RAM!
+
+If you'd like to modify or replace my settings with your own, here's how you can do it:
+
+1. Install the `lua-language-server` extension if you don't have it already. You can install it [from the Marketplace](https://marketplace.visualstudio.com/items?itemName=sumneko.lua).
+2. Open the `dst-docs/` folder.
+3. Fixing your settings:
+    1. From UI
+        1. Go to `Preferences -> Settings`.
+        2. In the *Search settings* textbox type `@ext:sumneko.lua`.
+        3. Look for the settings you'd like to modify and set their values accordingly. You can search by id (like `Lua.diagnostics.disable`) or by words, like just type out `Diagnostics` to see the relevant choices.
+    2. From Command Palette
+        1. Hit `CTRL + SHIFT + P` to open the command palette.
+        2. Search for `Open Workspace Settings (JSON)` then hit `ENTER`.
+        3. You'll be greeted by an empty JSON file.
+        4. Between the outermost pair of curly braces, write your desired settings. For example, here's some settings that I think help with annotations and such, but they eat quite a bit of RAM.
+        ```json
+        {
+            "Lua.diagnostics.enable": true,
+            "Lua.codeLens.enable": true,
+            "Lua.completion.requireSeparator": "/",
+            "Lua.workspace.library": [
+                "scripts/",
+                "engine/"
+            ],
+        }
+        ``` 
+
+# Limitations
+
+Currently, this only works with the [Lua Language Server](https://luals.github.io/) extension by sumneko, for **Visual Studio Code**. 
+
+> Supposedly the extension works for **NeoVim**, but don't ask me anything about that cause I don't use it currently! Maybe in the future...
+
+I chose this extension because the it provides a lot of annotations that are shown to you when you hover over variables that have said annotations. I make use of them a lot! However, they are specific to this extension so many other editors won't be able to make use of them.
+
+In the future I'd like to create Markdown documents instead so that we don't have to rely on editor-specific extensions.
+
+
 # TODO List
 
 - [x] Actually start the project :D
-- [x] Divide workload for engine functions.
-- [ ] Check out the values of the engine constants ingame.
-- [ ] Explain what each constant does, where it's used and how to use it.
-- [ ] Determine parameters and return values for engine functions.
-- [ ] Explain what each function does and how to use it.
+
+Here's a sort of "Laundry List" to follow to subdivide the ordeal into smaller tasks
+
+## Engine Constants
+
+- [ ] Find out if a value is defined from the engine.
+- [ ] Explain what it does.
+- [ ] Determine its possible values.
+- [ ] Determine how to use it.
+- [ ] Add observations from usage in Klei's code and my own testing.
+
+## Engine Functions
+
+- [ ] Figure out if a given function is from C source or Lua.
+- [ ] Divide table functions into hypothetical "categories".
+- [ ] Determine parameters and return values.
+- [ ] Add observations from usage in Klei's code and my own testing.
+
 
 Note: there's a little under 1800 functions. So I doubt even if I were single-mindedly dedicated to *just* this task, I alone wouldn't be able to complete it in a lifetime...
-
-# The `scripts/` folder
-
-[By default](https://git-scm.com/book/en/v2/Git-Tools-Submodules), when you clone this repository, there's nothing in the `scripts/` folder. That's perfectly normal! It's a way to save space as that repo is about 500 megabytes so I don't want to immediately clog your device's memory unless you explicitly say so.
-
-To add the contents of the `dst_gamescripts` repo, first run this:
-
-    git submodule init
-
-Then run this:
-
-    git submodule update
-
-Do note that this will clone the full repo, commit history and all. It amounts to about 500 megabytes! 
-
-If you'd like to reduce the size, you can append the `--depth <number>` flag to specify how far back you want your submodule's cloned history to go:
-
-    git submodule update --depth 1
-
-`--depth 1` just means *"please get only up to the 1st most recent commit/s, thanks"*. You can change out `1` for other positive whole numbers.
-
 
 # Credits
 
@@ -79,8 +151,8 @@ Although not a dependency, I think that having a well maintained archive of the 
 
 I've added the [dst_gamescripts repository](https://github.com/penguin0616/dst_gamescripts) which is maintained by [penguin0616] and [Hornet] as a `git submodule`.
 
-#### The following section is just for me in case I forget everything, which I tend to do *a lot*...
-
+<!-- Not necessary, clogs up the visuals, probably just confuses people if I include this -->
+<!-- 
 To create a `submodule` within `git`:
 
     git submodule add <remote-url> [path]
@@ -91,7 +163,8 @@ For this repository, I set it to a directory to be called `./scripts/`.
 
     git submodule add https://github.com/penguin0616/dst_gamescripts scripts
 
-As always, `git fetch` and `git pull` are your best friends when it comes to updating.
+As always, `git fetch` and `git pull` are your best friends when it comes to updating. 
+-->
 
 <!-- LINKS -->
 <!-- 
