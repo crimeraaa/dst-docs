@@ -1,9 +1,166 @@
+-- Is of type `userdata` ingame.
+---@class TheNet
 TheNet = {
+
+    ----------------------------------------------------------------------------
+    ----------------------- GENERAL PURPOSE FUNCTIONS --------------------------
+    ----------------------------------------------------------------------------
+
+    -- Sends a message to chat, e.g. `TheNet:say("Hi mom!")` will be sent to global chat.
+    -- The message will come from your account because your instance of TheNet
+    -- will use your Klei ID.
+    ---@param self TheNet
+    ---@param msg string
+    ---@param do_whisper? boolean Pass `true` to whisper. Omit or pass `false` for global chat.
+    Say = function(self, msg, do_whisper, ...)
+        -- `nil` or `false`
+        if not do_whisper then
+            print("whispering:", msg)
+        else 
+            print("global chat:", msg)
+        end
+    end,
+
+    -- Sends a message to global chat but shows it as coming from the server
+    -- rather than any one player.
+    --
+    -- If you want to do a periodic announce please see `c_announce`
+    -- as defined in `scripts/consolecommands.lua`.
+    ---@param self any
+    ---@param msg string
+    ---@param unknown1? any See `scripts/consolecommands.lua:59`.
+    ---@param unknown2? any I can't figure out why these 2 are here.
+    ---@param category? string The command only checks for the string "system".
+    Announce = function(self, msg, unknown1, unknown2, category) 
+        print("Server Announcement: ", msg)
+        print("Got", unknown1, unknown2, category)
+    end,
+
+    -- Note that you cannot kick server admins.
+    -- TODO: Determine if need index into `AllPlayers` or Klei ID.
+    Kick = function(self, userid)
+        print("Kicked", userid, "from the game.") 
+    end,
+
+    -- Note that you cannot ban server admins.
+    Ban = function(self, userid) 
+        print("Banned", userid, "from the game.") 
+    end,
+
+    ----------------------------------------------------------------------------
+    ------------ GETTER FUNCTIONS (`Get` prefixed functions) -------------------
+    ----------------------------------------------------------------------------
+
+    -- Returns `true` for the current session if:
+    --
+    --1.) You are hosting a world directly from DST and playing on it.
+    --
+    --2.) You ran this command on the primary/master shard's dedicated server terminal.
+    --
+    -- Otherwise, you'll get back `false`.
+    GetIsMasterSimulation = function(self) 
+        return true
+    end,
+
+    GetLocalUserName = function(self) 
+        return "(your username)"
+    end,
+
+    -- Returns a table of players and some basic information about them.
+    -- Only returns a non-empty table when currently in a world.
+    -- Note that the dedicated server itself may also be included here.
+    -- TODO: Figure out the differences between remote and local invocations.
+    GetClientTable = function(self) 
+        return {
+            -- Sample table of a dedicated server. If you're using a dedicated
+            -- server, then the "player" named "[Host]" will always come first.
+            [1] = {
+                name = "[Host]",
+                prefab = "",
+                userflags = 0,
+                userid = "KU_########",
+                muted = false,
+                admin = true,
+                equip = {},
+                eventlevel = 0,
+                friend = false,
+                lobbycharacter = "",
+                performance = 0,
+                playerage = 0,
+                skillselection = {0},
+                vanity = {},
+                colour = {
+                    0.8039,
+                    0.3098,
+                    0.2235,
+                    1
+                }
+            },
+            -- Sample table of me playing as Wigfrid.
+            [2] = {
+                name = "Crimeraaa",
+                prefab = "wathgrithr",
+                lobbycharacter = "",
+                -- You can mute people from the player list, 
+                -- press the `TAB` key to see your options.
+                muted = false,
+                netid = 123456789,
+                userid = "Ku_########",
+                admin = true,
+                base_skin = "wathgrithr_yule",
+                body_skin = "body_willow_yule",
+                feet_skin = "feet_willow_ice",
+                -- [1] = background portrait, [2] = profile icon.
+                vanity = {
+                    "playerportrait_bg_panflutean",
+                    "profileflair_spider"
+                },
+
+                -- Probably RGBA values, I'm fairly certain [4] = alpha channel
+                colour = {
+                    0.8039, 
+                    0.3098, 
+                    0.2235, 
+                    1       -- makes sense for 1 to mean 100% (opacity)
+                },
+
+                --[1]: backpack slot, 
+                --[2]: head clothing
+                --[3]: I don't know what this is used for, 
+                --[3]: equipped hand item
+                equip = {
+                    "krampus_sack",
+                    "rainhat_flopper",
+                    "",
+                    "cane_ancient"
+                },
+
+                -- I assume this has to do with skill trees.
+                skillselection = {0},
+
+                -- What could this be doing?
+                eventlevel = 0,
+                userflags = 0,
+                friend = true,
+
+            },
+        }
+    end,
+
     -- See `c_netstats()` defined in `scripts/consolecommands.lua` for sample usage.
-    -- Other than that, I have no idea what this does.
+    -- Other than that, I have no idea what this does. It just returns an empty table
+    -- regardless if I'm ingame or not, or on a dedicated server or not.
     GetNetworkStatistics = function(self) 
         return {}
     end,
+
+    ----------------------------------------------------------------------------
+    ------------ SETTER FUNCTIONS (`Set` prefixed functions) -------------------
+    ----------------------------------------------------------------------------
+
+    ---- UNDOCUMENTED ----------------------------------------------------------
+    -- TODO: You know, actually figure out what these take and what they return...
+
     GetServerLANOnly = function(...) end,
     SetAllowNewPlayersToConnect = function(...) end,
     SetIsWorldSaving = function(...) end,
@@ -26,7 +183,6 @@ TheNet = {
     GetDefaultGameMode = function(...) end,
     Disconnect = function(...) end,
     GetDefaultServerName = function(...) end,
-    GetLocalUserName = function(...) end,
     GetAveragePing = function(...) end,
     IsSearchingServers = function(...) end,
     IsClanIDValid = function(...) end,
@@ -51,7 +207,7 @@ TheNet = {
     IsWhiteListed = function(...) end,
     AutoJoinLanServer = function(...) end,
     GetWorldSessionFileInClusterSlot = function(...) end,
-    GetIsMasterSimulation = function(...) end,
+
     SetServerPlaystyle = function(...) end,
     NotifyAuthenticationFailure = function(...) end,
     SetCloudServerInitiatorUserId = function(...) end,
@@ -62,7 +218,6 @@ TheNet = {
     SendWorldResetRequestToServer = function(...) end,
     HasPendingConnection = function(...) end,
     SendWorldSaveRequestToMaster = function(...) end,
-    Announce = function(...) end,
     GetIsHosting = function(...) end,
     SetBlacklist = function(...) end,
     GetDefaultClanAdmins = function(...) end,
@@ -84,9 +239,9 @@ TheNet = {
     StopSearchingServers = function(...) end,
     GetDefaultPvpSetting = function(...) end,
     GetServerClanOnly = function(...) end,
-    Say = function(...) end,
+    
     GetDefaultLANOnlyServer = function(...) end,
-    Kick = function(...) end,
+    
     SetDefaultServerLanguage = function(...) end,
     SetServerTags = function(...) end,
     GetAllowNewPlayersToConnect = function(...) end,
@@ -179,7 +334,6 @@ TheNet = {
     GetAllowIncomingConnections = function(...) end,
     GetServerName = function(...) end,
     SetGameData = function(...) end,
-    Ban = function(...) print('../mods/workshop-1290774114/modmain.lua:111') end,
     LeaveParty = function(...) end,
     SendWorldRollbackRequestToServer = function(...) end,
     GetServerListing = function(...) end,
@@ -202,7 +356,6 @@ TheNet = {
     DoneLoadingMap = function(...) end,
     GetServerIsDedicated = function(...) end,
     SendModRPCToShard = function(...) end,
-    GetClientTable = function(...) end,
     ReportListing = function(...) end,
     SetDefaultFriendsOnlyServer = function(...) end,
     IsVoiceActive = function(...) end,

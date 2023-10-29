@@ -13,16 +13,18 @@
     // Credit to Hornet, obviously!
     "Lua.diagnostics.globals": [
         // DST MOD ENV
-        "GLOBAL",
         "AddAction",
         "AddComponentPostInit",
         "AddPrefabPostInit",
         "AddPrefabPostInitAny",
         "AddPlayerPostInit"
     ],
+    // Resource Monitor: on my laptop, Lua LSP eats up about 4 GB if at 100%...
+    "Lua.diagnostics.workspaceRate": 100,
     "Lua.diagnostics.workspaceDelay": -1,
     "Lua.completion.autoRequire": true,
     "Lua.codeLens.enable": true,
+
     // DST uses the forward slash so I'll opt to use it too for consistency.
     "Lua.completion.requireSeparator": "/",
     "Lua.diagnostics.libraryFiles": "Opened",
@@ -32,9 +34,10 @@
         "?.lua",
         "?/init.lua",
     ],
+
     // Need this so we can have good syntax highlighting.
     "Lua.workspace.library": [
         "scripts/",
         "engine/"
-    ]
+    ],
 }

@@ -17,17 +17,22 @@
 BRANCH = "release"
 
 -- I can't tell yet what the other possible values could be. The scripts only
--- ever check for `"PRODUCTION"`.
----@type "RELEASE"|"PRODUCTION"
-CONFIGURATION = "RELEASE"
+-- ever check for `"PRODUCTION"`. 
+-- Based on testing, even my own installation has this set to `"PRODUCTION"`.
+---@type "PRODUCTION"
+CONFIGURATION = "PRODUCTION"
 
 -- The current working directory of Don't Starve Together.
 -- The actual value is set by your installation of the game.
 CWD = "C:/Program Files (x86)/Steam/steamapps/common/Don't Starve Together/data"
 
--- Location of DST mods based on your installation. 
+-- Location of DST mods based on your installation. Used to determine where to
+-- load mods from. See `scripts/mods.lua` and `scripts/modutil.lua`.
+--
 -- The actual value is set by your installation of the game.
-MODS_ROOT = "C:/Program Files (x86)/Steam/steamapps/common/Don't Starve Together/mods"
+-- It seems that this is based on `CWD`, and since `CWD` is the data/ folder,
+-- we have to go back one folder to be able to poke at the mods directory.
+MODS_ROOT = "../mods"
 
 -- I'm assuming that since `ModWrangler:LoadServerModsFile` checks for `"Rail"`,
 -- this is the platform where you got DST from. The other is probably `"Steam"`?
@@ -43,4 +48,9 @@ PLATFORM = "WIN32_STEAM"
 
 IS_STEAM_DECK = false
 
-RUN_GLOBAL_INIT = true
+-- This is only `true` when you start up the game. After you load into a world,
+-- it's set to `false` presumably to prevent reloading a whole bunch of stuff.
+RUN_GLOBAL_INIT = false
+
+-- See `scripts/gamelogic.lua:1037` and `scripts/gamelogic.lua:1235`.
+PRINT_TEXTURE_INFO = false
