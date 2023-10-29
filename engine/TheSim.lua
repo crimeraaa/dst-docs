@@ -1,32 +1,102 @@
+-- For all functions that have the `self` parameter, this indicates that they
+-- can be called with colon notation to implicitly pass the caller as the first param.
+--
+-- e.g. `TheSim:FindEntities(...)` is equivalent to `TheSim.FindEntities(TheSim, ...)`.
+---@class TheSim
 TheSim = {
     -- Only referenced in the Lua sided `CreateEntity` function in `main.lua`.
     -- We see a reference to `ent:GetGUID` is only found in the C facing `Entity` table.
     -- So perhaps there's metatable business (faux inheritance).
-    -- TODO: Figre out if all DST entities have one giant common metatable.
-    ---@param self table `TheSim` itself. Called via colon notation.
+    -- TODO: Figure out if all DST entities have one giant common metatable.
+    ---@param self TheSim
     CreateEntity = function(self)
         return setmetatable({}, Entity)
     end,
 
     -- Returns a list of mod names. Probably as strings?
     -- I think these are of ALL installed mods, both local and workshop.
+    ---@param self TheSim
     ---@return string[]
-    GetModDirectoryNames = function(...) 
+    GetModDirectoryNames = function(self) 
         return {}
     end,
 
-    -- Returns a table of currently loaded entities.
-    -- Use colon notation rather than dots, e.g. `TheSim:FindEntities(x, y, z, radius)`,
-    -- as you need to pass `TheSim` itself as the first parameter so colons help you
-    -- do that implicitly rather than needing `TheSim.FindEntities(TheSim, x, y, z, radius)`.
+    -- Returns a table of currently loaded entities. 
+    -- It is based on the the given coordinates and its search range is `radius`.
+    --
+    -- For sample usages of the `_tags` parameters, see `scripts/brains/slurtlebrain.lua:71`.
+    -- Basically, if you provide them, they help control which entities are included.
+    ---@param self TheSim
     ---@param x number 
     ---@param y number 
     ---@param z number
     ---@param radius number Up to how far to check for loaded entites.
-    ---@param tags? string[] Only count entities that contain these tags?
+    ---@param must_tags? string[]
+    ---@param cant_tags? string[]
+    ---@param oneof_tags? string[]
     ---@return table
-    FindEntities = function(self, x, y, z, radius, tags) 
+    FindEntities = function(self, x, y, z, radius, must_tags, cant_tags, oneof_tags) 
         return {} 
+    end,
+
+    -- The actual Lua `print` function resides here. It prints to `client_log.txt`
+    -- but not to the ingame console.
+    ---@param self TheSim
+    ---@param ... any
+    LuaPrint = function(self, ...) 
+    end,
+
+    -- Only referenced in `scripts/mainfunctions.lua:389`.
+    -- It seems the Lua sided global `SpawnPrefab` is just a wrapper around 
+    -- `TheSim:SpawnPrefab`.
+    ---@param self TheSim
+    ---@param name string
+    ---@param skin? string
+    ---@param skin_id? any
+    ---@param creator? any
+    SpawnPrefab = function(self, name, skin, skin_id, creator)
+        -- don't mind me just writing out my scripts here because yeah
+        local fn_name, fn_proper
+        
+        -- Need to poke at GetAllItemCategories since it's an upvalue
+        for i = 1, debug.getinfo(_G.IsItemId).nups do
+            ---@type string, fun():table
+            fn_name, fn_proper = debug.getupvalue(_G.IsItemId, i)
+            if fn_name == "GetAllItemCategories" then
+                break
+            end
+        end
+
+        if not fn_proper then
+            return
+        end
+
+        local item_categories = fn_proper()
+        -- category #4 is the shortest at 14 elems, #1 has like 5900 xd
+        for k, v in pairs(item_categories[4]) do
+            print(k, type(k), "\t", v, type(v))
+        end
+    end,
+
+    -- Sets the speed for everything, hence we speed up or slow down the "simulation".
+    -- WARNING: DO NOT CALL `TheSim:SetTimeScale(0)` UNLESS YOU WANNA FREEZE LMAO
+    ---@param multiplier number
+    SetTimeScale = function(self, multiplier)
+        if multiplier == 0 then
+            print("gg")
+        else
+            if multiplier > 0 then
+                print("Speeding up simulation by", multiplier, "times...")
+            else
+                print("Slowing down simulation by", multiplier, "times...")
+            end
+        end
+    end,
+
+    -- Retrives the current time scale, typically as previously set by 
+    -- `TheSim:SetTimeScale`. See `engine/TheSim.lua:53`.
+    GetTimeScale = function(self)
+        return 1 
     end,
 
     -------- UNDOCUMENTED ------------------------------------------------------
@@ -57,7 +127,6 @@ TheSim = {
     LoadKlumpString = function(...) end,
     GetAmbientColour = function(...) end,
     DuplicateSlot = function(...) end,
-
     PrintTextureInfo = function(...) end,
     ToggleDebugTexture = function(...) end,
     AppendSaveString = function(...) end,
@@ -71,7 +140,6 @@ TheSim = {
     SendProfileStats = function(...) end,
     SetLowPassFilter = function(...) end,
     MemTrackerPush = function(...) end,
-    SpawnPrefab = function(...) end,
     SendHardwareStats = function(...) end,
     SetInstanceParameters = function(...) end,
     IsLoggedOn = function(...) end,
@@ -199,7 +267,7 @@ TheSim = {
     HasMOTDImage = function(...) end,
     ClearAllDSP = function(...) end,
     SetHoloTexture = function(...) end,
-    LuaPrint = function(...) end,
+    
     RemapSoundEvent = function(...) end,
     UpdateDebugTexture = function(...) end,
     SetDebugRenderEnabled = function(...) end,
@@ -231,7 +299,6 @@ TheSim = {
     IsNetbookMode = function(...) end,
     Quit = function(...) end,
     GetUserHasLicenseForApp = function(...) end,
-    SetTimeScale = function(...) end,
     SendJSMessage = function(...) end,
     AbortFileExistsAsync = function(...) end,
     SetSoundVolume = function(...) end,
@@ -243,7 +310,6 @@ TheSim = {
     GetGameID = function(...) end,
     IsSteamChinaClient = function(...) end,
     GetPosition = function(...) end,
-    GetTimeScale = function(...) end,
     PreloadFile = function(...) end,
     ShowAnimOnEntitiesWithTag = function(...) end
 }

@@ -81,9 +81,9 @@
 -------- MATH LIBRARY (the `math` table) ---------------------------------------
 -- Klei didn't remove any of the `math` methods to my knowledge.
 -- They did add some in `scripts/mathutil.lua`:
--- math.diff
--- math.range
--- math.clamp
+-- math.diff    (scripts/mathutil.lua:72)
+-- math.range   (scripts/mathutil.lua:62)
+-- math.clamp   (scripts/mathutil.lua:42)
 --
 --
 -------- STRINGS LIBRARY (the `string` table) ----------------------------------
@@ -109,7 +109,7 @@ kleiloadlua = function(filepath, ...)
     end
 end
 
--- See `kleiloadlua` in `engine-functions.lua`, it seems similar.
+-- See `kleiloadlua` in `engine-functions.lua:106`, it seems similar.
 ---@param filepath string
 kleifileexists = function(filepath, ...) 
     print("Checking if", filepath, "exists...")
@@ -138,6 +138,7 @@ VisitURL = function(...) print('function: 0000000010626CD0') end
 hash = function(...) print('function: 0000000010626A00') end
 utf8char = function(...) print('function: 0000000010626BE0') end
 
+
 ---- GLOBAL ENGINE TABLES ------------------------------------------------------
 -- TODO figure these out...
 -- In a similar vein to the Lua standard libaries, Klei packages some C-sided
@@ -148,11 +149,33 @@ utf8char = function(...) print('function: 0000000010626BE0') end
 -- cram them in here until I have a good reason not to.
 --------------------------------------------------------------------------------
 
+-- Seems to be a module defined in `scripts/json.lua:69`.
+-- The table contents aren't immediately clear so I assume it's created
+-- at runtime or something.
+-- Example usage: `scripts/consolescreensettings.lua:66`, 
+json = {}
+
+-- I have no clue what this is for. See `scripts/main.lua:469` where it's called
+-- as the only parameter to `SetInstanceParameters`.
+-- Also seems like this isn't actually accessible ingame. Hmm...
+json_settings = {}
+
+
 -- Bit manipulation. It's surprisingly useful but Lua 5.1 has out-of-the-box ones.
+--
+-- I'm guessing we only accept ints. You can only do (sane) bitwise ops
+-- on unsigned integers and some compiler-specific extensions for signed.
+--
+-- Although Lua `number` is typically implemented as a `double` floating type
+-- from C, remember that floating types can indeed represent pure integers.
+-- `double` has 52 bits in its mantissa or (roughly) 2^29 integral values.
+--
 bit = {
-    -- bitwise AND.
-    -- I'm guessing we only accept ints, as you can only do sane 
-    -- bitwise operations with unsigned integers.
+    -- Bitwise AND. 
+    --
+    -- For each bit in integers `a` and `b`, only sets the 
+    -- corresponding result bit to `1` if both bits are `1`. Otherwise
+    -- sets the result bit to `0`.
     ---@param a integer
     ---@param b integer
     band = function(a, b) 
@@ -160,15 +183,32 @@ bit = {
     end,
 
     -- Bitwise OR.
-    bor = function(...) end,
+    --
+    -- For each bit in integers `a` and `b`, sets the corresponding result bit
+    -- to `1` if either input bit is `1`, otherwise set it to `0`.
+    ---@param a integer
+    ---@param b integer
+    bor = function(a, b) 
+        return 0
+    end,
 
     -- Bitwise NOT. Just returns all the flipped bits of input `value`.
     bnot = function(value) 
         return 1
     end,
+
     -- Bitwise XOR.
-    bxor = function(...) end,
-    rshift = function(...) end,
+    --
+    -- For each bit in integers `a` and `b`, only set the corresponding result bit
+    -- to `1` if both input bits are the same- that is both are `1` or both are `0`.
+    bxor = function(a, b) end,
+
+    -- Bit shift right.
+    rshift = function(value, offset) 
+        return 0
+    end,
+
+    -- Bit shift left.
     lshift = function(value, offset) 
         return 0
     end
