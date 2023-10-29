@@ -36,11 +36,11 @@ CWD = "C:/Program Files (x86)/Steam/steamapps/common/Don't Starve Together/data"
 MODS_ROOT = "../mods"
 
 -- String of the Distribution Platform you got DST from.
--- See `ModWrangler:LoadServerModsFile` from `mods.lua`.
+-- See `ModWrangler:LoadServerModsFile` from `scripts/mods.lua`.
 ---@type "Steam"|"Rail"
 DIST_PLATFORM = "Steam"
 
--- Your operating system + distribution platform, I think. See `createstringspo.lua`.
+-- Your operating system + distribution platform, I think. See `scripts/createstringspo.lua`.
 --
 -- Find all occurences via regex: `\bPLATFORM\b`
 ---@type "WIN32_STEAM"|"LINUX_STEAM"|"OSX_STEAM"|"WIN32_RAIL"|"PS4"|"XBL"

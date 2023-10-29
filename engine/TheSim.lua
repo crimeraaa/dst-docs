@@ -28,7 +28,8 @@ TheSim = {
     ------------------------- ENTITY FUNCTIONS  --------------------------------
     ----------------------------------------------------------------------------
 
-    -- Only referenced in the Lua sided `CreateEntity` function in `main.lua`.
+    -- Only referenced in the Lua sided `CreateEntity` function in `scripts/main.lua`.
+    --
     -- We see a reference to `ent:GetGUID` which is only found in the `Entity` table.
     --
     -- The `Entity` table, likewise, also consists of C-sided functions.
@@ -42,7 +43,9 @@ TheSim = {
     -- Returns a table of currently loaded entities. 
     -- It is based on the the given coordinates and its search range is `radius`.
     --
-    -- For sample usages of the `_tags` parameters, see `scripts/brains/slurtlebrain.lua:71`.
+    -- For sample usages of the `_tags` parameters
+    --  see `scripts/brains/slurtlebrain.lua:71`.
+    -- 
     -- Basically, if you provide them, they help control which entities are included.
     ---@param self TheSim
     ---@param x number 

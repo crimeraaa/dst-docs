@@ -17,8 +17,7 @@
     ],
     "Lua.codeLens.enable": true,
     "Lua.workspace.library": [
-        "C:/Users/crimeraaa/repos/dst/scripts/",
-        "C:/Users/crimeraaa/repos/dst/engine/"
+        "absolute-path-to-dst-docs/"
     ],
     "Lua.completion.requireSeparator": "/",
     "Lua.type.weakUnionCheck": true

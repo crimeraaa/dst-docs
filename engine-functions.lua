@@ -38,7 +38,7 @@
 --      2.) Test them out ingame.
 --          Some engine functions are easily exposed, such as the ones in the
 --          `Transform` table. For example, `ThePlayer` has a `Transform` field
---          which is really just the `__index` metamethod which points to the 
+--          which is really just calls the `__index` metamethod which points to the 
 --          main `Transform` table. This is sort of object oriented "inheritance".
 --
 -- So contained in this file are the list of functions defined from C. 

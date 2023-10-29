@@ -98,8 +98,7 @@ I've included a file `./sample-user-settings.json` which shows the settings I'm 
             "Lua.codeLens.enable": true,
             "Lua.completion.requireSeparator": "/",
             "Lua.workspace.library": [
-                "absolute-path-to-dst-docs/scripts/",
-                "absolute-path-to-dst-docs/engine/"
+                "absolute-path-to-dst-docs/",
             ],
         }
         ```
