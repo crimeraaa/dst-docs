@@ -3,12 +3,35 @@
 TheNet = {
 
     ----------------------------------------------------------------------------
-    ----------------------- GENERAL PURPOSE FUNCTIONS --------------------------
+    ------------------------- MODERATION FUNCTIONS -----------------------------
     ----------------------------------------------------------------------------
 
-    -- Sends a message to chat, e.g. `TheNet:say("Hi mom!")` will be sent to global chat.
+    -- Kicks the player associated with the Klei ID `userid` from the game.
+    -- Note that you cannot kick server admins.
+    ---@param self TheNet
+    ---@param userid string
+    Kick = function(self, userid)
+        print("Kicked", userid, "from the game.") 
+    end,
+
+    -- Bans the player associated with the Klei ID `userid` from the game.
+    -- Note that you cannot ban server admins.
+    ---@param self TheNet
+    ---@param userid string
+    Ban = function(self, userid) 
+        print("Banned", userid, "from the game.") 
+    end,
+
+    ----------------------------------------------------------------------------
+    ----------------------------- CHAT FUNCTIONS -------------------------------
+    ----------------------------------------------------------------------------
+
+    -- Sends a message to chat, defaults to global chat.
     -- The message will come from your account because your instance of TheNet
     -- will use your Klei ID.
+    --
+    -- `scripts/builtinusercommands:70`, there's to be 3rd non-self parameter.
+    -- TODO: Find out what that does.
     ---@param self TheNet
     ---@param msg string
     ---@param do_whisper? boolean Pass `true` to whisper. Omit or pass `false` for global chat.
@@ -26,30 +49,27 @@ TheNet = {
     --
     -- If you want to do a periodic announce please see `c_announce`
     -- as defined in `scripts/consolecommands.lua`.
+    --
+    -- `scripts/consolecommands.lua:59`: there are 3 more optional parameters.
+    -- 2 of them are `nil` while the 3rd one is `category`.
+    --
+    -- `category` is possibly a string.
+    -- The code in that line checks for the string literal "system"
+    -- TODO: Find out what those optional parameters do.
     ---@param self any
     ---@param msg string
-    ---@param unknown1? any See `scripts/consolecommands.lua:59`.
-    ---@param unknown2? any I can't figure out why these 2 are here.
-    ---@param category? string The command only checks for the string "system".
+    ---@param unknown1? any
+    ---@param unknown2? any
+    ---@param category? string
     Announce = function(self, msg, unknown1, unknown2, category) 
         print("Server Announcement: ", msg)
         print("Got", unknown1, unknown2, category)
     end,
 
-    -- Note that you cannot kick server admins.
-    -- TODO: Determine if need index into `AllPlayers` or Klei ID.
-    Kick = function(self, userid)
-        print("Kicked", userid, "from the game.") 
-    end,
-
-    -- Note that you cannot ban server admins.
-    Ban = function(self, userid) 
-        print("Banned", userid, "from the game.") 
-    end,
-
     ----------------------------------------------------------------------------
     ------------ GETTER FUNCTIONS (`Get` prefixed functions) -------------------
     ----------------------------------------------------------------------------
+    -- TODO: Further subdivide these based on some sort of topic/category.
 
     -- Returns `true` for the current session if:
     --
@@ -148,8 +168,10 @@ TheNet = {
     end,
 
     -- See `c_netstats()` defined in `scripts/consolecommands.lua` for sample usage.
-    -- Other than that, I have no idea what this does. It just returns an empty table
-    -- regardless if I'm ingame or not, or on a dedicated server or not.
+    -- Other than that, I am not sure what this does.
+    --
+    -- It just returns an empty table regardless if I'm ingame or not, 
+    -- or on a dedicated server or not. Perhaps I'm missing something.
     GetNetworkStatistics = function(self) 
         return {}
     end,
@@ -157,9 +179,9 @@ TheNet = {
     ----------------------------------------------------------------------------
     ------------ SETTER FUNCTIONS (`Set` prefixed functions) -------------------
     ----------------------------------------------------------------------------
+    -- TODO: Further subdivide these based on some sort of topic/category.
 
-    ---- UNDOCUMENTED ----------------------------------------------------------
-    -- TODO: You know, actually figure out what these take and what they return...
+    -- TODO: Sort everything below here.
 
     GetServerLANOnly = function(...) end,
     SetAllowNewPlayersToConnect = function(...) end,

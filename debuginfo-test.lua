@@ -12,18 +12,14 @@ end
 local function get_string(prompt, ...)
     local input = nil
     prompt = (prompt and prompt:format(...)) or "Input:"
-    while true do
+    -- if `io.stdin.read` fails somehow, it'll return `nil`.
+    while input == nil do
         printf(prompt)
-        -- io.stdin:read can return nil on failure.
-        ---@type string|nil
         input = io.stdin:read("*l")
-        if input and input ~= "" then
-            return input
-        end
-        -- Need flush in case we need to read stdin again
-        -- otherwise it'll get stuck reading any unread data...
+        -- Flush in case we need to read stdin again
         io.stdin:flush()
     end
+    return input
 end
 
 ---@param fn function

@@ -63,7 +63,7 @@ Of interest to us are the `source`, `what` and `short_src` fields. For more info
 
             > git submodule update --depth 1
 
-        You may also replace `1` with any value you like. This just tells `git`` up to how far down the most recent commit history it should retrieve.
+        You may also replace `1` with any value you like. This just tells `git` up to how far down the most recent commit history it should retrieve.
     9. If you did all that you wanted to, you should be able to open this folder in your favorite code editor/IDE and get to work!
 
 2. Cloning the repo using **GitHub desktop**
@@ -77,33 +77,34 @@ Of interest to us are the `source`, `what` and `short_src` fields. For more info
 
 ### Visual Studio Code setup
 
-When cloning/forking this repo, you'll actually get a copy of the `settings.json` file I'm using at the moment. It already has a bunch of settings needed to allow for annotations/completion, but be warned the the sheer number of scripts will eat quite a bit of RAM!
+I'd recommend creating/editing your own user or project-specific `settings.json`. This allows your instance of the extension to look up this repo's scripts and such to allow for automatic annotations, even if you're outside the repo directory.
 
-If you'd like to modify or replace my settings with your own, here's how you can do it:
+I've included a file `./sample-user-settings.json` which shows the settings I'm currently using for the extension.
 
 1. Install the `lua-language-server` extension if you don't have it already. You can install it [from the Marketplace](https://marketplace.visualstudio.com/items?itemName=sumneko.lua).
-2. Open the `dst-docs/` folder.
-3. Fixing your settings:
+2. Edit your user settings or workspace settings:
     1. From UI
         1. Go to `Preferences -> Settings`.
         2. In the *Search settings* textbox type `@ext:sumneko.lua`.
         3. Look for the settings you'd like to modify and set their values accordingly. You can search by id (like `Lua.diagnostics.disable`) or by words, like just type out `Diagnostics` to see the relevant choices.
     2. From Command Palette
         1. Hit `CTRL + SHIFT + P` to open the command palette.
-        2. Search for `Open Workspace Settings (JSON)` then hit `ENTER`.
-        3. You'll be greeted by an empty JSON file.
-        4. Between the outermost pair of curly braces, write your desired settings. For example, here's some settings that I think help with annotations and such, but they eat quite a bit of RAM.
+        2. Search for `Open User Settings (JSON)` or `Open Workspace Settings (JSON)` then hit `ENTER`.
+        3. You'll be greeted by a new window containing a JSON file.
+        4. Between the outermost pair of curly braces, write your desired settings. For example, here's some settings that I think help with annotations and such. Be careful as they may eat quite a bit of RAM.
         ```json
         {
             "Lua.diagnostics.enable": true,
             "Lua.codeLens.enable": true,
             "Lua.completion.requireSeparator": "/",
             "Lua.workspace.library": [
-                "scripts/",
-                "engine/"
+                "absolute-path-to-dst-docs/scripts/",
+                "absolute-path-to-dst-docs/engine/"
             ],
         }
-        ``` 
+        ```
+
+        Replace `absolute-path-to-dst-docs` with the directory you cloned it to e.g. `C:/Users/crimeraaa/repos/dst-docs/`.
 
 # Limitations
 

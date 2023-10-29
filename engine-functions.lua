@@ -67,10 +67,15 @@
 --
 --
 ------- OS LIBRARY (the `os` table) --------------------------------------------
--- Only `os.difftime`, `os.date`, `os.time` and `os.clock` are available.
--- Others, like `os.exit` and `os.execute` are not available.
---
---
+
+-- Methods such as `os.exit` and `os.execute` are not available.
+os = {
+    difftime = os.difftime,
+    date = os.date,
+    time = os.time,
+    clock = os.clock
+}
+
 ------- I/O Library (the `io` table) -------------------------------------------
 -- We can't make much use of `io.stdout` because DST makes use of different file streams.
 -- e.g. `io.stdout:write("message")` won't work properly.
@@ -81,14 +86,24 @@
 -------- MATH LIBRARY (the `math` table) ---------------------------------------
 -- Klei didn't remove any of the `math` methods to my knowledge.
 -- They did add some in `scripts/mathutil.lua`:
--- math.diff    (scripts/mathutil.lua:72)
--- math.range   (scripts/mathutil.lua:62)
--- math.clamp   (scripts/mathutil.lua:42)
+-- math.clamp           (scripts/mathutil.lua:42)
+-- math.range           (scripts/mathutil.lua:62)
+-- math.diff            (scripts/mathutil.lua:72)
 --
 --
 -------- STRINGS LIBRARY (the `string` table) ----------------------------------
--- Mostly unchanged but Klei made some additions. See `scripts/util.lua`.
---
+-- Mostly unchanged but Klei made some additions.
+-- string.findall       (scripts/util.lua:96)
+-- string.rfind         (scripts/util.lua:112)
+-- string.rfindplain    (scripts/util.lua:123)
+-- string.random        (scripts/util.lua:1531)
+-- The following just point to the global env functions of the same names.
+-- string.utf8char      (scripts/util.lua:1557)
+-- string.utf8sub       (scripts/util.lua:1558)
+-- string.utf8len       (scripts/util.lua:1559)
+-- string.utf8upper     (scripts/util.lua:1560)
+-- string.utf8lower     (scripts/util.lua:1561)
+-- 
 --
 --------------------------------------------------------------------------------
 
@@ -99,8 +114,10 @@
 -- most (if not all!) of everything from this point on are Klei specific functions.
 --------------------------------------------------------------------------------
 
--- I'm unsure what it does exactly, but it returns a function based on `filepath`. 
--- That's all I know. There are 2 optional arguments but I'm not sure what they do.
+-- Returns a function based on `filepath`. That's as much as I know right now.
+--
+-- There are 2 optional arguments but I'm not sure what they do just yet.
+--
 -- See `main.lua`, `mods.lua`, `modindex.lua` for sample usages.
 ---@param filepath string
 kleiloadlua = function(filepath, ...) 
@@ -109,7 +126,7 @@ kleiloadlua = function(filepath, ...)
     end
 end
 
--- See `kleiloadlua` in `engine-functions.lua:106`, it seems similar.
+-- See `kleiloadlua` in `engine-functions.lua`, it seems similar.
 ---@param filepath string
 kleifileexists = function(filepath, ...) 
     print("Checking if", filepath, "exists...")
@@ -141,41 +158,52 @@ utf8char = function(...) print('function: 0000000010626BE0') end
 
 ---- GLOBAL ENGINE TABLES ------------------------------------------------------
 -- TODO figure these out...
--- In a similar vein to the Lua standard libaries, Klei packages some C-sided
--- functions into global environment Lua tables.
+-- In a similar vein to the Lua standard libaries, Klei exposes some C functions 
+-- into global environment Lua tables.
 --
 -- The ones you see below are quite short. Other, longer/verbose/complicated ones 
 -- (or those that fit into a category) go into separate files. Otherwise, I just
 -- cram them in here until I have a good reason not to.
 --------------------------------------------------------------------------------
 
--- Seems to be a module defined in `scripts/json.lua:69`.
--- The table contents aren't immediately clear so I assume it's created
--- at runtime or something.
--- Example usage: `scripts/consolescreensettings.lua:66`, 
+-- Seems to be a module defined (by the `module` function).
+-- See `scripts/json.lua:69`, `scripts/consolescreensettings.lua:66`.
+--
+-- The fully table contents aren't immediately clear. 
+-- Perhaps it's created at runtime or something.
 json = {}
 
--- I have no clue what this is for. See `scripts/main.lua:469` where it's called
--- as the only parameter to `SetInstanceParameters`.
--- Also seems like this isn't actually accessible ingame. Hmm...
+-- See `scripts/main.lua:469`.
+-- In the function `SetInstanceParameters`, it's the only parameter.
+-- This is also the only time it is ever used.
+--
+-- As an aside, it seems like this isn't actually accessible ingame. Hmm...
 json_settings = {}
 
 
--- Bit manipulation. It's surprisingly useful but Lua 5.1 has out-of-the-box ones.
---
+----- RANDOM INFORMATION ON BITWISE OPERATIONS ---------------------------------
 -- I'm guessing we only accept ints. You can only do (sane) bitwise ops
--- on unsigned integers and some compiler-specific extensions for signed.
+-- on unsigned integers and some C/C++ compiler-specific extensions for signed.
 --
 -- Although Lua `number` is typically implemented as a `double` floating type
 -- from C, remember that floating types can indeed represent pure integers.
--- `double` has 52 bits in its mantissa or (roughly) 2^29 integral values.
 --
+-- `double` has 52 bits in its mantissa or (roughly) 2^52 integral values.
+-- That's more than enough to represent 32-bit integers, whether signed or not!
+--------------------------------------------------------------------------------
+
+-- Bit manipulation library. It's surprisingly useful but Lua 5.1 doesn't come with any.
+--
+-- So it looks like Klei implemented it themselves from C++, because C/C++ do
+-- provide you with direct access to bitwise operators. It's pretty fun!
 bit = {
     -- Bitwise AND. 
     --
     -- For each bit in integers `a` and `b`, only sets the 
     -- corresponding result bit to `1` if both bits are `1`. Otherwise
     -- sets the result bit to `0`.
+    --
+    -- e.g `0b01101000 AND 0b00110101 = 0b00100000`
     ---@param a integer
     ---@param b integer
     band = function(a, b) 
@@ -186,13 +214,19 @@ bit = {
     --
     -- For each bit in integers `a` and `b`, sets the corresponding result bit
     -- to `1` if either input bit is `1`, otherwise set it to `0`.
+    --
+    ---- e.g `0b01110011 OR 0b00111101 = 0b01111111`
     ---@param a integer
     ---@param b integer
     bor = function(a, b) 
         return 0
     end,
 
-    -- Bitwise NOT. Just returns all the flipped bits of input `value`.
+    -- Bitwise NOT. 
+    -- 
+    -- Just returns a flipped bits verison input `value`.
+    --
+    -- e.g `NOT 0b10001101 = 0b01110010`
     bnot = function(value) 
         return 1
     end,
@@ -203,12 +237,27 @@ bit = {
     -- to `1` if both input bits are the same- that is both are `1` or both are `0`.
     bxor = function(a, b) end,
 
-    -- Bit shift right.
+    -- Bit shift right. Moves all of `value`'s bits to the right by `offset` amount.
+    -- This is what it looks like in C:
+    ---```c
+    ---int x = 0b01001101 >> 2; 
+    ---/* x is now the binary literal 0b00010011 */
+    ---```
+    ---@param value integer
+    ---@param offset integer
     rshift = function(value, offset) 
         return 0
     end,
 
-    -- Bit shift left.
+    -- Bit shift left. Moves all of `value`'s bits to the left by `offset` amount.
+    --
+    -- This is what it looks like in C:
+    ---```c
+    ---int x = 0b00010110 << 3; 
+    ---/* x is now the binary literal 0b10110000 */
+    ---```
+    ---@param value integer
+    ---@param offset integer
     lshift = function(value, offset) 
         return 0
     end
