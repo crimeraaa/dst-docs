@@ -1,0 +1,25 @@
+{
+    "Lua.runtime.version": "Lua 5.1",
+    "Lua.diagnostics.groupFileStatus": {
+        "global": "Any",
+        "codestyle": "None"
+    },
+    "Lua.diagnostics.enable": true,
+    "Lua.diagnostics.workspaceRate": 100,
+    "Lua.diagnostics.disable": [
+        "lowercase-global",
+        "trailing-space",
+        "need-check-nil"
+    ],
+    "Lua.runtime.path": [
+        "?.lua",
+        "?/init.lua"
+    ],
+    "Lua.codeLens.enable": true,
+    "Lua.workspace.library": [
+        "C:/Users/crimeraaa/repos/dst/scripts/",
+        "C:/Users/crimeraaa/repos/dst/engine/"
+    ],
+    "Lua.completion.requireSeparator": "/",
+    "Lua.type.weakUnionCheck": true
+}
