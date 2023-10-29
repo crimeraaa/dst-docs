@@ -28,8 +28,12 @@ TheNet = {
     -- as defined in `scripts/consolecommands.lua`.
     ---@param self any
     ---@param msg string
-    Announce = function(self, msg) 
+    ---@param unknown1? any See `scripts/consolecommands.lua:59`.
+    ---@param unknown2? any I can't figure out why these 2 are here.
+    ---@param category? string The command only checks for the string "system".
+    Announce = function(self, msg, unknown1, unknown2, category) 
         print("Server Announcement: ", msg)
+        print("Got", unknown1, unknown2, category)
     end,
 
     -- Note that you cannot kick server admins.
@@ -92,7 +96,6 @@ TheNet = {
                     1
                 }
             },
-
             -- Sample table of me playing as Wigfrid.
             [2] = {
                 name = "Crimeraaa",
@@ -145,7 +148,8 @@ TheNet = {
     end,
 
     -- See `c_netstats()` defined in `scripts/consolecommands.lua` for sample usage.
-    -- Other than that, I have no idea what this does.
+    -- Other than that, I have no idea what this does. It just returns an empty table
+    -- regardless if I'm ingame or not, or on a dedicated server or not.
     GetNetworkStatistics = function(self) 
         return {}
     end,
