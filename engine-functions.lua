@@ -118,7 +118,8 @@ os = {
 --
 -- There are 2 optional arguments but I'm not sure what they do just yet.
 --
--- See `main.lua`, `mods.lua`, `modindex.lua` for sample usages.
+-- See `scripts/main.lua`, `scripts/mods.lua`, `scripts/modindex.lua`
+-- for sample usages.
 ---@param filepath string
 kleiloadlua = function(filepath, ...) 
     return function()

@@ -1,3 +1,5 @@
+-- Shorthand for `TheSimulation`.
+--
 -- For all functions that have the `self` parameter, this indicates that they
 -- can be called with colon notation to implicitly pass the caller as the first param.
 --
@@ -18,12 +20,69 @@ TheSim = {
         print(...)
     end,
     QueryServer = function(self, ...) end,
-    GetMOTDQueryURL = function(...) end,
+    -- Can't wait to find out what this does!
     Crash = function(...) end,
     Reset = function(...) end,
     Step = function(...) end,
     Hook = function(...) end,
+    DebugPause = function(...) end,
+    IsDebugPaused = function(...) end,
+    ToggleDebugPause = function(...) end,
 
+    ----------------------------------------------------------------------------
+    ----------------------- GENERIC FILE FUNCTIONS  ----------------------------
+    ----------------------------------------------------------------------------
+    -- ? `LoadUserFile` is in USER/PLAYER functions and settings.
+
+    PauseFileExistsAsync = function(...) end,
+    StartFileExistsAsync = function(...) end,
+    ClearFileSystemAliases = function(...) end,
+    AbortFileExistsAsync = function(...) end,
+    VerifyFileExistsAsync = function(...) end,
+    LoadKlumpFile = function(...) end,
+    PreloadFile = function(...) end,
+    GetFileModificationTime = function(self, ...) end,
+    
+    ----------------------------------------------------------------------------
+    -------------------- SAVE-FILE/SAVE-DATA FUNCTIONS  ------------------------
+    ----------------------------------------------------------------------------
+    -- Unsure if these ALL have to do with save files specifically.
+
+    GetSaveFiles = function(...) end,
+    GetSaveString = function(...) end,
+    InitSaveString = function(...) end,
+    OpenSaveFolder = function(...) end,
+    AppendSaveString = function(...) end,
+    FinalizeSaveString = function(...) end,
+    GetNextCloudSaveSlot = function(...) end,
+    GetFolderForCloudSaveSlot = function(...) end,
+    RemoveLastCommaSaveString = function(...) end,
+
+    ----------------------------------------------------------------------------
+    ------------------------- MAIN MENU FUNCTIONS  -----------------------------
+    ----------------------------------------------------------------------------
+    
+    GetMOTDQueryURL = function(...) end,
+    SetMOTDTarget = function(...) end,
+    HasMOTDImage = function(...) end,
+    LoadMOTDImage = function(...) end,
+    DownloadMOTDImages = function(...) end,
+    DownloadMOTDImage = function(...) end,
+    
+    ----------------------------------------------------------------------------
+    --------------------------- STRING FUNCTIONS  ------------------------------
+    ----------------------------------------------------------------------------
+    -- TODO: Probably sort these into topics like "Savedata Functions"
+
+    GetPersistentStringInClusterSlot = function(...) end,
+    SetPersistentStringInClusterSlot = function(...) end,
+    LoadKlumpString = function(...) end,
+    ZipAndEncodeString = function(...) end,
+    GetPersistentString = function(...) end,
+    SetPersistentString = function(...) end,
+    DecodeAndUnzipString = function(...) end,
+
+    
     ----------------------------------------------------------------------------
     ------------------------- ENTITY FUNCTIONS  --------------------------------
     ----------------------------------------------------------------------------
@@ -40,6 +99,7 @@ TheSim = {
     CreateEntity = function(self)
         return setmetatable({}, Entity)
     end,
+
     -- Returns a table of currently loaded entities. 
     -- It is based on the the given coordinates and its search range is `radius`.
     --
@@ -72,11 +132,11 @@ TheSim = {
     ------------------------- PREFAB FUNCTIONS  --------------------------------
     ----------------------------------------------------------------------------
 
-    -- Only referenced in `scripts/mainfunctions.lua:389`.
+    -- It seems the Lua sided global `SpawnPrefab` (`scripts/mainfunctions.lua:389`) 
+    -- is just a wrapper around `TheSim:SpawnPrefab`. 
     --
-    -- It seems the Lua sided global `SpawnPrefab` is just a wrapper around 
-    -- `TheSim:SpawnPrefab`. `TheSim:SpawnPrefab` seems to return a GUID 
-    -- which is used to index into the global `Ents` table.
+    -- `TheSim:SpawnPrefab` returns a GUID we is used to index into the global 
+    -- `Ents` table.
     ---@param self TheSim
     ---@param name string
     ---@param skin? string
@@ -91,9 +151,20 @@ TheSim = {
     UnloadAllPrefabs = function(...) end,
     UnregisterPrefabs = function(...) end,
     UnregisterAllPrefabs = function(...) end,
+    
+    ----------------------------------------------------------------------------
+    ------------------------ SOUNDS/SFX FUNCTIONS  -----------------------------
+    ----------------------------------------------------------------------------
+
+    SetReverbPreset = function(...) end,
+    TurnOffReverb = function(...) end,
+    GetSoundVolume = function(self, ...) end,
+    SetSoundVolume = function(...) end,
+    RemapSoundEvent = function(...) end,
+    StopAllSounds = function(...) end,
 
     ----------------------------------------------------------------------------
-    ------------------------------ TIME FUNCTIONS  -----------------------------
+    ------------------------- TICK/TIME FUNCTIONS  -----------------------------
     ----------------------------------------------------------------------------
 
     -- Sets the speed for everything, hence we speed up or slow down the "simulation".
@@ -102,23 +173,30 @@ TheSim = {
     -- ! WARNING: DO NOT CALL `TheSim:SetTimeScale(0)` UNLESS YOU WANNA FREEZE LMAO
     ---@param multiplier number
     SetTimeScale = function(self, multiplier)
+        -- zero and negative multipliers (probably) kill your game
         if multiplier <= 0 then
             print("gg")
         else
             print("Simulation is now at speed ", multiplier)
         end
     end,
-    GetTickTime = function(self, ...) end,
+
+    -- Retrieves the current tick rate. I believe DST's default is 15/second?
+    GetTickTime = function(self, ...) 
+        return 15
+    end,
+
     -- Retrives the current time scale, typically as previously set by 
     -- `TheSim:SetTimeScale`. See `engine/TheSim.lua`.
     GetTimeScale = function(self)
         return 1 
     end,
     GetRealTime = function(self, ...) end,
-    GetFileModificationTime = function(self, ...) end,
+    GetTick = function(...) end,
+    GetStaticTick = function(...) end,
 
     ----------------------------------------------------------------------------
-    -------------------- USER/PLAYER FUNCTIONS AND SETTINGS  --------------------------
+    -------------------- USER/PLAYER FUNCTIONS AND SETTINGS  -------------------
     ----------------------------------------------------------------------------
     
     ---@param self TheSim
@@ -151,6 +229,55 @@ TheSim = {
     GetSteamAppID = function(self, ...) end,
     GetSteamBetaBranchName = function(self, ...) end,
     GetSteamIDNumber = function(self, ...) end,
+    
+    ----------------------------------------------------------------------------
+    -------------------------- SCREEN FUNCTIONS --------------------------------
+    ----------------------------------------------------------------------------
+
+    GetScreenSize = function(...) end,
+    GetScreenPos = function(...) end,
+    ProjectScreenPos = function(...) end,
+    DebugStringScreen = function(...) end,
+    GetEntityAtScreenPoint = function(...) end,
+
+    ----------------------------------------------------------------------------
+    -------------------------- CAMERA FUNCTIONS --------------------------------
+    ----------------------------------------------------------------------------
+    -- TODO: Determine differences between this and the Lua sided `TheCamera`.
+
+    -- See `FollowCamera:Apply` (`scripts/followcamera.lua:218`) for sample usage.
+    SetCameraUp = function(...) end,
+    SetCameraFOV = function(...) end,
+    -- See `FollowCamera:Apply` (`scripts/followcamera.lua:205`) for sample usage.
+    SetCameraDir = function(...) end,
+    -- See `FollowCamera:Apply` (`scripts/followcamera.lua:200`) for sample usage.
+    SetCameraPos = function(...) end,
+    SetDebugCameraRotation = function(...) end,
+    SetDebugCameraTarget = function(...) end,
+    ToggleDebugCamera = function(...) end,
+
+    ----------------------------------------------------------------------------
+    -------------------------- RENDER FUNCTIONS --------------------------------
+    ----------------------------------------------------------------------------
+
+    RenderOneFrame = function(...) end,
+    SetRenderPassDefaultEffect = function(...) end,
+    GetDebugRenderEnabled = function(...) end,
+    SetDebugRenderEnabled = function(...) end,
+    UpdateRenderExtents = function(...) end,
+    GetDebugPhysicsRenderEnabled = function(...) end,
+    SetDebugPhysicsRenderEnabled = function(...) end,
+
+    ----------------------------------------------------------------------------
+    -------------------------- TEXTURE FUNCTIONS -------------------------------
+    ----------------------------------------------------------------------------
+
+    AddTextureToStreamingGroup = function(...) end,
+    PrintTextureInfo = function(...) end,
+    SetHoloTexture = function(...) end,
+    SetErosionTexture = function(...) end,
+    ToggleDebugTexture = function(...) end,
+    UpdateDebugTexture = function(...) end,
 
     ----------------------------------------------------------------------------
     ------------------------ WORKSHOP AND MOD FUNCTIONS  -----------------------
@@ -186,31 +313,9 @@ TheSim = {
     -------------------------- DEBUG FUNCTIONS  --------------------------------
     ----------------------------------------------------------------------------
 
-    DebugStringScreen = function(...) end,
     DebugPushJsonMessage = function(...) end,
     ShouldInitDebugger = function(...) end,
-    
-    ---- DEBUG RENDER
-    GetDebugRenderEnabled = function(...) end,
-    SetDebugRenderEnabled = function(...) end,
 
-    ---- DEBUG PAUSE
-    DebugPause = function(...) end,
-    IsDebugPaused = function(...) end,
-    ToggleDebugPause = function(...) end,
-
-    ---- DEBUG CAMERA
-    SetDebugCameraRotation = function(...) end,
-    SetDebugCameraTarget = function(...) end,
-    ToggleDebugCamera = function(...) end,
-
-    ---- DEBUG TEXTURES
-    ToggleDebugTexture = function(...) end,
-    UpdateDebugTexture = function(...) end,
-
-    ---- DEBUG PHYSICS RENDER
-    GetDebugPhysicsRenderEnabled = function(...) end,
-    SetDebugPhysicsRenderEnabled = function(...) end,
     
     ----------------------------------------------------------------------------
     ------------------------- MEMORY FUNCTIONS  --------------------------------
@@ -222,101 +327,75 @@ TheSim = {
     SetMemInfoTrackingInterval = function(...) end,
     SetMemoryTracking = function(...) end,
     DumpMemoryStats = function(...) end,
+    ValidateHeap = function(...) end,
 
     ----------------------------------------------------------------------------
-    ------------ GENERIC GETTER FUNCTIONS (`Get` prefixed functions) -----------
+    -------------------- UNCATEGORIZED GETTER FUNCTIONS ------------------------
     ----------------------------------------------------------------------------
+    -- TODO: Organize these further, there may be ones we can "group" together.
 
-    GetSoundVolume = function(self, ...) 
-        print("TheSim:GetSoundVolume")
-    end,
+    -- Self-explanatory, but still need to find a category for it.
     GetFPS = function(self, ...) 
         return 30
     end,
+
+    -- `c_remote` (`scripts/consolecommands.lua:201`)
+    --
+    -- Seems to return `x, y, z` coordinates of some kind.
+    --
+    -- TODO: How different is this from `Transform.GetWorldPosition`?
     GetPosition = function(self, ...) 
+        return 129.37, 341.90, 100.89
     end,
+
     GetLightAtPoint = function(...) end,
     GetAmbientColour = function(...) end,
     GetStep = function(...) end,
     GetStashedPlayInstance = function(...) end,
     GetSetting = function(...) end,
     GetBuildDate = function(...) end,
-    GetPersistentString = function(...) end,
-    GetTick = function(...) end,
-    GetScreenSize = function(...) end,
-    GetSaveFiles = function(...) end,
     GetAnalogControl = function(...) end,
-    GetSaveString = function(...) end,
-    GetFolderForCloudSaveSlot = function(...) end,
+
     GetDigitalControl = function(...) end,
-    GetScreenPos = function(...) end,
     GetWindowSize = function(...) end,
     GetLocalSetting = function(...) end,
     GetClipboardData = function(...) end,
     GetMouseButtonState = function(...) end,
     GetDataCollectionSetting = function(...) end,
     GetGroundViewDirection = function(...) end,
-    GetStaticTick = function(...) end,
     GetGameID = function(...) end,
-    GetNextCloudSaveSlot = function(...) end,
-    GetEntityAtScreenPoint = function(...) end,
 
     ----------------------------------------------------------------------------
-    ------------ SETTER FUNCTIONS (`Set` prefixed functions) -------------------
+    -------------------- UNCATEGORIZED SETTER FUNCTIONS ------------------------
     ----------------------------------------------------------------------------
-
-    SetMOTDTarget = function(...) end,
+    
     SetupFontFallbacks = function(...) end,
     SetAmbientColour = function(...) print('../mods/BrighterDusk/modmain.lua:11') end,
-    SetRenderPassDefaultEffect = function(...) end,
     SetLowPassFilter = function(...) end,
     SetInstanceParameters = function(...) end,
-    SetCameraUp = function(...) end,
-    SetCameraFOV = function(...) end,
     SetSetting = function(...) end,
     SetUIRoot = function(...) end,
-    SetPersistentString = function(...) end,
     SetHighPassFilter = function(...) end,
     SetListener = function(...) end,
     SetDataCollectionSetting = function(...) end,
-    SetCameraDir = function(...) end,
-    SetReverbPreset = function(...) end,
     SetActiveAreaCenterpoint = function(...) end,
-    SetErosionTexture = function(...) end,
-    SetPersistentStringInClusterSlot = function(...) end,
-    SetHoloTexture = function(...) end,
-    SetCameraPos = function(...) end,
     SetDLCEnabled = function(...) end,
-    SetSoundVolume = function(...) end,
 
-    ----------------------------------------------------------------------------
-    ------------------------------- UNDOCUMENTED -------------------------------
-    ----------------------------------------------------------------------------
-    -- TODO #1: Organize into categories based on name. Should help ease the workload.
-    -- TODO #2: you know, actually document these...
+    -- TODO: Organize everything below into categories, somehow...
 
     ClearDSP = function(...) end,
     CanReadConfigurationDirectory = function(...) end,
-    RenderOneFrame = function(...) end,
     HasEnoughFreeDiskSpace = function(...) end,
-    LoadKlumpString = function(...) end,
     DuplicateSlot = function(...) end,
-    PrintTextureInfo = function(...) end,
-    AppendSaveString = function(...) end,
     WorldPointInPoly = function(...) end,
     LogBulkMetric = function(...) end,
-    ZipAndEncodeString = function(...) end,
     SendHardwareStats = function(...) end,
     UpdateDeviceCaps = function(...) end,
-    GetPersistentStringInClusterSlot = function(...) end,
     CanWriteConfigurationDirectory = function(...) end,
-    ValidateHeap = function(...) end,
-    UpdateRenderExtents = function(...) end,
     UnloadFont = function(...) end,
     AddBatchVerifyFileExists = function(...) end,
     SetVisualAmbientColour = function(...) print('../mods/BrighterDusk/modmain.lua:19') end,
     GetNumLaunches = function(...) end,
-    DownloadMOTDImages = function(...) end,
     ApplyLocalWordFilter = function(...) end,
     GenerateNewWorld = function(...) end,
     SendUITrigger = function(...) end,
@@ -325,46 +404,26 @@ TheSim = {
     HasValidLogFile = function(...) end,
     LoadFont = function(...) end,
     StashPlayInstance = function(...) end,
-    LoadMOTDImage = function(...) end,
-    PauseFileExistsAsync = function(...) end,
     ConvertSlotToCloudOrLocal = function(...) end,
     CheckPersistentStringExists = function(...) end,
     CopyLegacySessionToSlot = function(...) end,
     ShouldPlayIntroMovie = function(...) end,
     AdjustFontAdvance = function(...) end,
-    DownloadMOTDImage = function(...) end,
-    StopAllSounds = function(...) end,
     PrintLoadedTextureInfo = function(...) end,
     AtlasContains = function(...) end,
-    TurnOffReverb = function(...) end,
-    FinalizeSaveString = function(...) end,
-    ProjectScreenPos = function(...) end,
     SendGameStat = function(...) end,
     RegisterFindTags = function(...) end,
-    DecodeAndUnzipString = function(...) end,
-    OpenSaveFolder = function(...) end,
-    AddTextureToStreamingGroup = function(...) end,
     ReportAction = function(...) end,
     TogglePerfGraph = function(...) end,
-    StartFileExistsAsync = function(...) end,
-    ClearFileSystemAliases = function(...) end,
     DecodeKleiData = function(...) end,
     ClearInput = function(...) end,
-    HasMOTDImage = function(...) end,
     ClearAllDSP = function(...) end,
-    RemapSoundEvent = function(...) end,
     EnsureShardIndexPathExists = function(...) end,
     HasWindowFocus = function(...) end,
-    LoadKlumpFile = function(...) end,
     OnAssetPathResolve = function(...) end,
-    VerifyFileExistsAsync = function(...) end,
-    InitSaveString = function(...) end,
     HasPlayerSkeletons = function(...) end,
     SendJSMessage = function(...) end,
-    AbortFileExistsAsync = function(...) end,
     OpenDocumentsFolder = function(...) end,
     ResetError = function(...) end,
-    RemoveLastCommaSaveString = function(...) end,
-    PreloadFile = function(...) end,
 }
 -- TheSim = Sim  

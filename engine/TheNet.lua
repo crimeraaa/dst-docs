@@ -1,3 +1,5 @@
+-- Shorthand for `TheNetwork`, but there's also a global table called `Network`.
+--
 -- Is of type `userdata` ingame.
 ---@class TheNet
 TheNet = {
@@ -47,15 +49,24 @@ TheNet = {
     -- Sends a message to global chat but shows it as coming from the server
     -- rather than any one player.
     --
-    -- If you want to do a periodic announce please see `c_announce`
-    -- as defined in `scripts/consolecommands.lua`.
+    -- See `c_announce` (`scripts/consolecommands.lua`) for sample usage.
     --
-    -- `scripts/consolecommands.lua:59`: there are 3 more optional parameters.
-    -- 2 of them are `nil` while the 3rd one is `category`.
+    -- `scripts/consolecommands.lua:59`: there are 3 more parameters.
     --
-    -- `category` is possibly a string.
-    -- The code in that line checks for the string literal "system"
-    -- TODO: Find out what those optional parameters do.
+    -- `category` creates the display string `"["..category.."Announcement]"`
+    --
+    -- The first letter is also capitalized. Sample usages:
+    --
+    ---```lua
+    ----- [Announcement] Hello everyone!
+    ---TheNet:Announce("Hello everyone!")
+    ---
+    ----- [System Announcement] Hello!
+    ---TheNet:Announce("Hello!", nil, nil "system")
+    ---
+    ----- [Server Announcement] Shutting down...
+    ---TheNet:Announce("Shutting down...", nil, nil, "server") 
+    ---```
     ---@param self any
     ---@param msg string
     ---@param unknown1? any
@@ -66,11 +77,30 @@ TheNet = {
         print("Got", unknown1, unknown2, category)
     end,
 
+    
     ----------------------------------------------------------------------------
-    ------------ GETTER FUNCTIONS (`Get` prefixed functions) -------------------
+    ------------------- USER/SERVER INFORMATION FUNCTIONS ----------------------
     ----------------------------------------------------------------------------
-    -- TODO: Further subdivide these based on some sort of topic/category.
 
+    -- Returns `cluster_name` from `cluster.ini` for this particular server.
+    ---@param self TheNet
+    GetServerName = function(self) 
+        return "My Server"
+    end,
+
+    -- Returns the username of the host.
+    --
+    -- If dedicated server, returns "[Host]",
+    -- otherwise returns the hosting player's ingame name.
+    ---@return "[Host]"|"(your username)"
+    GetLocalUserName = function(self) 
+        if TheNet:GetServerIsDedicated() then
+            return "[Host]"
+        else
+            return "(your username)"
+        end
+    end,
+    
     -- Returns `true` for the current session if:
     --
     --1.) You are hosting a world directly from DST and playing on it.
@@ -81,15 +111,14 @@ TheNet = {
     GetIsMasterSimulation = function(self) 
         return true
     end,
-
-    GetLocalUserName = function(self) 
-        return "(your username)"
-    end,
+    
+    GetClientMetricsForUser = function(...) end,
+    GetServerIsClientHosted = function(...) end,
 
     -- Returns a table of players and some basic information about them.
     -- Only returns a non-empty table when currently in a world.
     -- Note that the dedicated server itself may also be included here.
-    -- TODO: Figure out the differences between remote and local invocations.
+    -- TODO: Are there differences between remote and local invocations?
     GetClientTable = function(self) 
         return {
             -- Sample table of a dedicated server. If you're using a dedicated
@@ -167,6 +196,33 @@ TheNet = {
         }
     end,
 
+    -- Creates a string array of the folder names of each mod.
+    -- These are not the display names seen on the workshop.
+    ---@return string[]
+    GetServerModNames = function(self) 
+        return {
+            "some-local-mod-directory",
+            "workshop-############",
+        }
+    end,
+
+    -- Returns `true` for dedicated servers themselves,
+    -- probably also `true` for hosting players.
+    --
+    -- Probably `false` for everybody else.
+    GetIsServer = function(self) 
+        return true
+    end,
+
+    -- Returns a single string containing all the names of the
+    -- currently enabled mods. Each name is separated by a comma.
+    --
+    -- TODO: Verify if no mods enabled, returns an empty string.
+    ---@return string
+    GetServerModsDescription = function(self) 
+        return "Mod #1 (workshop), Mod #2 (local)"
+    end,
+
     -- See `c_netstats()` defined in `scripts/consolecommands.lua` for sample usage.
     -- Other than that, I am not sure what this does.
     --
@@ -176,25 +232,182 @@ TheNet = {
         return {}
     end,
 
-    ----------------------------------------------------------------------------
-    ------------ SETTER FUNCTIONS (`Set` prefixed functions) -------------------
-    ----------------------------------------------------------------------------
-    -- TODO: Further subdivide these based on some sort of topic/category.
+    GetPartyTable = function(...) end,
+    GetDefaultClanOnly = function(...) end,
+    GetServerListingFromActualIndex = function(...) end,
+    GetClientTableForUser = function(...) end,
+    GetAllowIncomingConnections = function(...) end,
 
-    -- TODO: Sort everything below here.
+    -- Returns a table of information that's shown when other players
+    -- hover over this server when searching.
+    --
+    -- See the sample return value in `engine/TheNet.lua` for more information.
+    GetServerListing = function(self) 
+        -- Here's a sample for my dedicated testing server.
+        return {
+            allow_new_players = true,
+            belongs_to_clan = false,
+            clan_only = false,
+            clan_server = false,
+            client_mods_disabled = false,
+            current_players = 0,
+            dedicated = true,
+            description = "There's nothing here! Go away.",
+            friend = false,
+            friend_playing = false,
+            friends_only = false,
+            game_data = {
+                day = 17,
+                dayselapsedinseason = 16,
+                daysleftinseason = 10000
+            },
+            -- I thought this was a number but I guess not!
+            guid = "81232181143196297781",
+            has_details = true,
+            has_password = true,
+            ip = "",
+            klei_official = false,
+            lan_only = false,
+            max_players = 6,
+            mode = "survival",
+            -- I believe this just the contents of your `modoverrides.lua`.
+            mods_config_data = "return { [\"0002-custom-console-cmds\"]={} }",
+            mods_description = {
+                [1] = {
+                    all_clients_require_mod = true,
+                    mod_name = "0002-custom-console-cmds",
+                    modinfo_name = "Custom Console Command (Local)",
+                    version = "1.0.0",
+                    version_compatible = "1.0.0"
+                },
+                [2] = {
+                    all_clients_require_mod = false,
+                    mod_name = "workshop-29345800090",
+                    modinfo_name = "Ultra Creative/Godmode",
+                    version = "1.1.0",
+                    version_compatible = "1.1.0"
+                }
+            },
+            mods_enabled = true,
+            mods_failed_deserialization = false,
+            name = "Tartarus",
+            nat = 7,
+            offline = false,
+            owner = true,
+            ping = -1,
+            players_data = "return {}",
+            playstyle = "endless",
+            port = 11000,
+            pvp = false,
+            -- String of base-16/hexadecimal digits.
+            row = "f921eed42de2d5ee6c8ff16e",
+            season = "autumn",
+            serverpaused = false,
+            -- String of base-16/hexadecimal digits.
+            session = "123456789ABCDEF",
+            steamnat = true,
+            -- String of base-10/decimal digits only.
+            steamnatstr = "123456789",
+            tags = "english,survival,vote",
+            version = 578580,
+            -- Some really really big hashed value goes here. 
+            -- Probably base-64 or even higher.
+            world_gen_data = "return {str=\"0123456789abcdefg!@#$%^&*()_!?\"}"
+        }
+    end,
 
-    GetServerLANOnly = function(...) end,
+    -- (probably) returns the ID of the steam group/s associated with the server.
+    -- I don't like my servers to any so I don't know how this works.
+    --
+    -- If steam groups, returns an empty string.
+    GetDefaultClanID = function(self) 
+        return ""
+    end,
+    
+    -- Returns `true` if any mods, whether local or workshop, are enabled.
+    -- Otherwise returns `false`.
+    ---@param self TheNet
+    GetServerModsEnabled = function(self) 
+        return true
+    end,
+
+    -- I believe this was for the time when servers could only be set to the 
+    -- game modes "Survival", "Endless" and "Wilderness".
+    ---@param self TheNet
+    ---@deprecated
+    GetServerIntention = function(self) 
+        print("GetServerIntention - Server intention is deprecated!")
+        return ""
+    end,
+
+    -- I believe this was for the time when servers could only be set to the 
+    -- game modes "Survival", "Endless" and "Wilderness".
+    ---@param self TheNet
+    ---@deprecated 
+    GetDefaultServerIntention = function(self) 
+        print("GetDefaultServerIntention - Server intention is deprecated!")
+        return ""
+    end,
+
+    -- Returns the plaintext server password. Be careful with this!
+    --
+    -- Here's a fun experiment: try passing the return value of this to
+    -- the global engine functions `hash` or `smallhash`!
+    GetDefaultServerPassword = function(self) 
+        return "password1234"
+    end,
+    HasCachedUserID = function(...) end,
+    GetServerHasPresentAdmin = function(...) end,
+
+    -- Only returns `true` for dedicated servers, duh.
+    --
+    -- Note that if you host a forest + caves world ingame, that's also considered
+    -- as a dedicated server.
+    GetServerIsDedicated = function(self) 
+        return false
+    end,
+
+    -- Returns the configured maximum number of players for this server.
+    -- The default is `6`.
+    --
+    -- See `max_players` integer config from your `cluster.ini`.
+    GetServerMaxPlayers = function(...) 
+        return 6
+    end,
+
+    -- Returns `true` is server is paused, else false.
+    -- Note that servers can be configured to be paused or not when nobody is on.
+    --
+    -- See `pause_when_empty` boolean config in your `cluster.ini`.
+    IsServerPaused = function(self) 
+        return false
+    end,
+
+    -- Returns the default values for `max_players`, which is `6` I beleive.
+    --
+    -- This is separate from the actual configured value.
+    GetDefaultMaxPlayers = function(self) 
+        return 6
+    end,
+
+    -- Returns `true` if your server is only set up on a Local Access Network (LAN).
+    -- Otherwise, returns false. 
+    GetServerLANOnly = function(self) 
+        return false
+    end,
+
+    ----------------------------------------------------------------------------
+    ------------------------ UNCATEGORIZED FUNCTIONS ---------------------------
+    ----------------------------------------------------------------------------
+
     SetAllowNewPlayersToConnect = function(...) end,
     SetIsWorldSaving = function(...) end,
-    GetDefaultMaxPlayers = function(...) end,
     SetIsMatchStarting = function(...) end,
     ServerModSetup = function(...) end,
     PrintNetwork = function(...) end,
     SetDefaultMaxPlayers = function(...) end,
     StartWorldSave = function(...) end,
     SetDefaultGameMode = function(...) end,
-    GetClientMetricsForUser = function(...) end,
-    GetServerIsClientHosted = function(...) end,
     TruncateSnapshotsInClusterSlot = function(...) end,
     SystemMessage = function(...) end,
     GetChildProcessError = function(...) end,
@@ -327,14 +540,11 @@ TheNet = {
     StopBroadcastingServer = function(...) end,
     DeserializeUserSessionInClusterSlot = function(...) end,
     LoadPermissionLists = function(...) end,
-    GetServerModNames = function(...) end,
     IsDedicatedOfflineCluster = function(...) end,
     DiceRoll = function(...) end,
     IsNetIDPlatformValid = function(...) end,
     GetUserSessionFile = function(...) end,
     TryDefaultEncodeUserPath = function(...) end,
-    GetIsServer = function(...) end,
-    GetServerModsDescription = function(...) end,
     JoinServerResponse = function(...) print('../mods/workshop-2059140073/modmain.lua:143') end,
     SetCurrentSnapshot = function(...) end,
     GetIsServerOwner = function(...) end,
@@ -345,30 +555,16 @@ TheNet = {
     GetCloudServerRequestState = function(...) end,
     DeserializeAllLocalUserSessions = function(...) end,
     BanForTime = function(...) print('../mods/workshop-1290774114/modmain.lua:116') end,
-    GetPartyTable = function(...) end,
-    GetDefaultClanOnly = function(...) end,
     EncodeUserPath = function(...) end,
     SetSeason = function(...) end,
-    GetServerListingFromActualIndex = function(...) end,
     GetChildProcessStatus = function(...) end,
     SetClientCacheSessionIdentifier = function(...) end,
-    GetClientTableForUser = function(...) end,
-    GetAllowIncomingConnections = function(...) end,
-    GetServerName = function(...) end,
     SetGameData = function(...) end,
     LeaveParty = function(...) end,
     SendWorldRollbackRequestToServer = function(...) end,
-    GetServerListing = function(...) end,
     IsNetOverlayEnabled = function(...) end,
-    GetDefaultClanID = function(...) end,
-    GetServerModsEnabled = function(...) end,
-    GetServerIntention = function(...) end,
-    GetDefaultServerIntention = function(...) end,
     GenerateClusterToken = function(...) end,
-    GetDefaultServerPassword = function(...) end,
     NotifyLoadingState = function(...) end,
-    HasCachedUserID = function(...) end,
-    GetServerHasPresentAdmin = function(...) end,
     StopVote = function(...) end,
     SetDeferredServerShutdownRequested = function(...) end,
     SetCheckVersionOnQuery = function(...) end,
@@ -376,14 +572,12 @@ TheNet = {
     IsConsecutiveMatchForPlayer = function(...) end,
     SetAutopaused = function(...) end,
     DoneLoadingMap = function(...) end,
-    GetServerIsDedicated = function(...) end,
     SendModRPCToShard = function(...) end,
     ReportListing = function(...) end,
     SetDefaultFriendsOnlyServer = function(...) end,
     IsVoiceActive = function(...) end,
     IsOnlineMode = function(...) end,
     SendResumeRequestToServer = function(...) end,
-    GetServerMaxPlayers = function(...) end,
     PartyChat = function(...) end,
     GetLocalClientUserSessionFile = function(...) end,
     GetPartyChatHistory = function(...) end,
@@ -391,5 +585,4 @@ TheNet = {
     InviteToParty = function(...) end,
     UpdatePlayingWithFriends = function(...) end,
     AddToWhiteList = function(...) end,
-    IsServerPaused = function(...) end
 }

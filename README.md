@@ -36,21 +36,36 @@ local info = {
 
 Of interest to us are the `source`, `what` and `short_src` fields. For more information please see [Programming in Lua: 23.1&mdash;Introspective Facilities.](https://www.lua.org/pil/23.1.html)
 
+With this knowledge we can attempt to get a list of functions that come from C. See [Hornet's thread][hornets-thread] and [Rickzzs' script][rickzzs-script].
+
+It's thanks to their work that I'm able to even dare to start this project.
+
 # Cloning/Forking
 
-1. Cloning the repo from the **command line**
-    1. Make sure you have `git` installed. For Windows, you may need to install Git Bash or Git for Windows.
-    2. Start your terminal of choice, like `cmd`, `powershell`, `bash`, etc.
+1. Using **GitHub desktop**
+    1. Go to `File -> Clone Repository -> URL`.
+    2. Paste `https://github.com/crimeraaa/dst-docs.git` in the *URL* textbox.
+    3. **(Optional):** change the location contained in *Local path* textbox.
+        - e.g. instead of `C:\Users\crimeraaa\Documents\Github\dst-docs`,
+        I can put: `C:\Users\crimeraaa\repos\dst-docs`.
+    4. Click `Clone` and wait. This will automatically retrieve the contents of the `dst_gamescripts` repo, which is *massive*.
+    5. Open this folder in your favorite code editor/IDE and get to work!
+2. Using `git` on the **command-line**
+    1. Make sure you have `git` installed. For Windows, you may need to install something like Git for Windows.
+    2. Start your terminal of choice, like `cmd`, `powershell`, `zsh`, `bash`, etc.
     3. `cd` to your folder where you want the repo's folder to reside. For example, in my Windows user folder, I have a folder called `repos/`.
     
             > cd C:\Users\crimeraaa\repos
             C:\Users\crimeraaa\repos>
 
+    I'll omit my user folder from the prompt for brevity from here on. The `>` symbol will represent your current working directory. On other shells, you may have `$` instead.
+
     4. Run this command:
 
             > git clone https://github.com/crimeraaa/dst-docs.git
 
-    5. Your current working directory should now have a folder called `dst-docs/` inside it.
+    5. Your current working directory should now have a folder called `dst-docs/` inside it. `cd` to it before proceeding.
+
     6. **(Optional):** If you want the contents of `dst_gamescripts` alongside this repo, first run this command:
 
             > git submodule init
@@ -66,15 +81,6 @@ Of interest to us are the `source`, `what` and `short_src` fields. For more info
         You may also replace `1` with any value you like. This just tells `git` up to how far down the most recent commit history it should retrieve.
     9. If you did all that you wanted to, you should be able to open this folder in your favorite code editor/IDE and get to work!
 
-2. Cloning the repo using **GitHub desktop**
-    1. Go to `File -> Clone Repository -> URL`.
-    2. Paste `https://github.com/crimeraaa/dst-docs.git` in the *URL* textbox.
-    3. **(Optional):** change the location contained in *Local path* textbox.
-        - e.g. instead of `C:\Users\crimeraaa\Documents\Github\dst-docs`,
-        I can put: `C:\Users\crimeraaa\repos\dst-docs`.
-    4. Click `Clone` and wait. This will automatically retrieve the contents of the `dst_gamescripts` repo, which is *massive*.
-    5. Open this folder in your favorite code editor/IDE and get to work!
-
 ### Visual Studio Code setup
 
 I'd recommend creating/editing your own user or project-specific `settings.json`. This allows your instance of the extension to look up this repo's scripts and such to allow for automatic annotations, even if you're outside the repo directory.
@@ -83,15 +89,15 @@ I've included a file `./sample-user-settings.json` which shows the settings I'm 
 
 1. Install the `lua-language-server` extension if you don't have it already. You can install it [from the Marketplace](https://marketplace.visualstudio.com/items?itemName=sumneko.lua).
 2. Edit your user settings or workspace settings:
-    1. From UI
+    1. Using the UI
         1. Go to `Preferences -> Settings`.
         2. In the *Search settings* textbox type `@ext:sumneko.lua`.
         3. Look for the settings you'd like to modify and set their values accordingly. You can search by id (like `Lua.diagnostics.disable`) or by words, like just type out `Diagnostics` to see the relevant choices.
-    2. From Command Palette
+    2. Using JSON
         1. Hit `CTRL + SHIFT + P` to open the command palette.
-        2. Search for `Open User Settings (JSON)` or `Open Workspace Settings (JSON)` then hit `ENTER`.
-        3. You'll be greeted by a new window containing a JSON file.
-        4. Between the outermost pair of curly braces, write your desired settings. For example, here's some settings that I think help with annotations and such. Be careful as they may eat quite a bit of RAM.
+        2. Search for `Open User Settings (JSON)` then hit `ENTER`.
+        3. You'll be greeted by a new tab showing z JSON file. If you edited these settings before, you might have pre-existing contents. Otherwise you may have an empty file that only has 1 pair of curly braces.
+        4. Between the outermost pair of curly braces, write your desired settings. For example, here's some settings that I think help with annotations and such. Again, these may eat quite a bit of RAM.
         ```json
         {
             "Lua.diagnostics.enable": true,
@@ -115,41 +121,41 @@ I chose this extension because the it provides a lot of annotations that are sho
 
 In the future I'd like to create Markdown documents instead so that we don't have to rely on editor-specific extensions.
 
+Another limitation is the fact that Klei updates the game rather frequently. Although they're pretty heavy on backwards-compatibility, sometimes things just have to change. And with a codebase as large as this, small changes can break big things. 
+
+They may also modify the C++ engine to add new functions, deprecate others or outright remove some.
+
 
 # TODO List
 
 - [x] Actually start the project :D
 
-Here's a sort of "Laundry List" to follow to subdivide the ordeal into smaller tasks
+Here's a sort of "Laundry List" to follow to subdivide the ordeal into smaller tasks.
 
 ## Engine Constants
 
-- [ ] Find out if a value is defined from the engine.
-- [ ] Explain what it does.
-- [ ] Determine its possible values.
-- [ ] Determine how to use it.
+- [ ] Find out if a given value is defined from the engine.
+- [ ] Look for where it's referenced in the Lua scripts.
+- [ ] Determine possible values (e.g. what string literals are being checked for?)
 - [ ] Add observations from usage in Klei's code and my own testing.
 
 ## Engine Functions
 
 - [ ] Figure out if a given function is from C source or Lua.
+- [ ] Look for where it's referenced in the Lua scripts.
 - [ ] Divide table functions into hypothetical "categories".
-- [ ] Determine parameters and return values.
-- [ ] Add observations from usage in Klei's code and my own testing.
+- [ ] Determine parameters and return values. We can infer them or test them.
 
 
 Note: there's a little under 1800 functions. So I doubt even if I were single-mindedly dedicated to *just* this task, I alone wouldn't be able to complete it in a lifetime...
 
 # Credits
 
-Hornet [created a thread to document][hornets-thread] the names of (most of) the engine functions at the time.
+[Hornet created a thread to list][hornets-thread] the names of (most of) the engine functions at the time.
 
-[There's a reply to that same thread][rickzzs-script] by Rickzzs. It's a script to dump all of the C sided functions which I think is really neat. I haven't tried using it myself, but as Klei updates the game I'll definitely think about using it to see what's changed.
+[Rickzzs replied to that same thread][rickzzs-script] with a script to dump all the C sided functions as well as a sample output file called `engine.lua` which is about 1800 lines long. None of the functions have actual code, they're mostly just `key = function(...) end`.
 
-<!-- Like in HTML, single newlines don't affect the output. -->
-Although not a dependency, I think that having a well maintained archive of the game's scripts is essential to getting full context as to how the engine is being utilized and also to appreciate how the Lua side really comes together. 
-
-I've added the [dst_gamescripts repository](https://github.com/penguin0616/dst_gamescripts) which is maintained by [penguin0616] and [Hornet] as a `git submodule`.
+The [dst_gamescripts repository](https://github.com/penguin0616/dst_gamescripts)  is currently maintained by [penguin0616] and [Hornet]. Their work goes back up to 2020. 
 
 <!-- Not necessary, clogs up the visuals, probably just confuses people if I include this -->
 <!-- 
