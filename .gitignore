@@ -8,3 +8,6 @@ mods/
 
 # Random folder I used to put people's client logs, mod scripts and such.
 discord-help/
+
+# This is a symlink to my V1 mods folder. Commiting it won't help anybody.
+v1-mods
