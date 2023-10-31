@@ -14,6 +14,9 @@
 
 -- Branch the current version and build of the game is at. Generally, it's set to
 -- `"release"` for us players.
+--
+-- In `scripts/main.lua:91`, it's used to index into the local `servers` table.
+-- However I'm guessing those links are internal? We can't access them it seems.
 ---@type "release"|"dev"|"staging"
 BRANCH = "release"
 
@@ -43,7 +46,7 @@ DIST_PLATFORM = "Steam"
 -- Your operating system + distribution platform, I think. See `scripts/createstringspo.lua`.
 --
 -- Find all occurences via regex: `\bPLATFORM\b`
----@type "WIN32_STEAM"|"LINUX_STEAM"|"OSX_STEAM"|"WIN32_RAIL"|"PS4"|"XBL"
+---@type "WIN32_STEAM"|"LINUX_STEAM"|"OSX_STEAM"|"WIN32_RAIL"|"PS4"|"XBL"|"NACL"
 PLATFORM = "WIN32_STEAM"
 
 IS_STEAM_DECK = false

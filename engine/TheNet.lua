@@ -1,5 +1,8 @@
 -- Shorthand for `TheNetwork`, but there's also a global table called `Network`.
 --
+-- Much of your instance's information of `TheNet` is tied to your Klei Account.
+-- e.g. your username, Klei ID and such.
+--
 -- Is of type `userdata` ingame.
 ---@class TheNet
 TheNet = {
@@ -82,6 +85,12 @@ TheNet = {
     ------------------- USER/SERVER INFORMATION FUNCTIONS ----------------------
     ----------------------------------------------------------------------------
 
+    -- Returns your Klei User ID. Even dedicated servers have one since their
+    -- instances of `TheNet` are tied to the person who owns the server.
+    GetUserID = function(self) 
+        return "Ku_########"
+    end,
+
     -- Returns `cluster_name` from `cluster.ini` for this particular server.
     ---@param self TheNet
     GetServerName = function(self) 
@@ -111,8 +120,13 @@ TheNet = {
     GetIsMasterSimulation = function(self) 
         return true
     end,
-    
-    GetClientMetricsForUser = function(...) end,
+
+    -- See `BuildContextTable` in `scripts/stats.lua:119` for sample usage.
+    -- There's 1 non-self param there, `sendstats.user`.
+    GetClientMetricsForUser = function(self, userstats) 
+        
+    end,
+
     GetServerIsClientHosted = function(...) end,
 
     -- Returns a table of players and some basic information about them.
@@ -356,8 +370,14 @@ TheNet = {
     GetDefaultServerPassword = function(self) 
         return "password1234"
     end,
+    
     HasCachedUserID = function(...) end,
-    GetServerHasPresentAdmin = function(...) end,
+
+    -- Returns `true` is at least 1 player in the server has admin status,
+    -- otherwise return `false`.
+    GetServerHasPresentAdmin = function(self) 
+        return true
+    end,
 
     -- Only returns `true` for dedicated servers, duh.
     --
@@ -407,7 +427,6 @@ TheNet = {
     PrintNetwork = function(...) end,
     SetDefaultMaxPlayers = function(...) end,
     StartWorldSave = function(...) end,
-    SetDefaultGameMode = function(...) end,
     TruncateSnapshotsInClusterSlot = function(...) end,
     SystemMessage = function(...) end,
     GetChildProcessError = function(...) end,
@@ -415,7 +434,24 @@ TheNet = {
     DownloadServerDetails = function(...) end,
     GetCurrentSnapshot = function(...) end,
     SearchLANServers = function(...) end,
-    GetDefaultGameMode = function(...) end,
+
+    -- Changes the server's default game mode to input `mode.
+    ---@param self TheNet
+    ---@param mode string
+    SetDefaultGameMode = function(self, mode)
+        print("Setting game mode to ", mode)
+    end,
+
+    -- Also retrieves the value previously set by `TheNet:GetDefaultGameMode`.
+    GetServerGameMode = function(self) 
+        return "survival"
+    end,
+
+    -- Retrieves the value previously set by `TheNet:GetDefaultGameMode`.
+    GetDefaultGameMode = function(self)
+        return "survival"
+    end,
+
     Disconnect = function(...) end,
     GetDefaultServerName = function(...) end,
     GetAveragePing = function(...) end,
@@ -436,7 +472,7 @@ TheNet = {
     DownloadServerMods = function(...) end,
     GetCloudServerId = function(...) end,
     EndWorldSave = function(...) end,
-    GetUserID = function(...) end,
+
     GetLanguageCode = function(...) end,
     OldJoinServerResponse = function(...) print('../mods/workshop-2650755381/modmain.lua:157') end,
     IsWhiteListed = function(...) end,
@@ -529,7 +565,6 @@ TheNet = {
     CallRPC = function(...) end,
     GetIsServerAdmin = function(...) end,
     ViewNetFriends = function(...) end,
-    GetServerGameMode = function(...) end,
     OnPlayerHistoryUpdated = function(...) end,
     ToggleLANDebugging = function(...) end,
     ViewNetProfile = function(...) end,

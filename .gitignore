@@ -1,3 +1,10 @@
-# My personal mods are a separate repository!
+# ==================================== NOTE ====================================
+# I have a global .gitignore file as specified in my .gitconfig,
+# so many commonly ignored files aren't shown here but are still ignored.
+# ==============================================================================
+
+# My local mod development folder, not very helpful/relevant for you.
 mods/
+
+# Random folder I used to put people's client logs, mod scripts and such.
 discord-help/

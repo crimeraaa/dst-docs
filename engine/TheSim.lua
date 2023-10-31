@@ -29,6 +29,20 @@ TheSim = {
     IsDebugPaused = function(...) end,
     ToggleDebugPause = function(...) end,
 
+    DebugPushJsonMessage = function(...) end,
+
+    -- Called to determine to value of the global boolean `DEBUGGER_ENABLED`,
+    -- in `scripts/main.lua:73`.
+    --
+    -- I'm guessing Klei has an in-house debugger called `debuggee.lua`, 
+    -- which why the check for `DEBUGGER_ENABLED` to be true includes:
+    -- 1. We are not on a Console Platform.
+    -- 2. `CONFIGURATION` is not equal to the string literal `"PRODUCTION"`.
+    -- 3. We are not on a dedicated server.
+    ShouldInitDebugger = function(self) 
+        return false
+    end,
+
     ----------------------------------------------------------------------------
     ----------------------- GENERIC FILE FUNCTIONS  ----------------------------
     ----------------------------------------------------------------------------
@@ -156,7 +170,13 @@ TheSim = {
     ------------------------ SOUNDS/SFX FUNCTIONS  -----------------------------
     ----------------------------------------------------------------------------
 
-    SetReverbPreset = function(...) end,
+    -- Sample usage in `scripts/main.lua:94`
+    ---@param self TheSim
+    ---@param preset string|"default"
+    SetReverbPreset = function(self, preset) 
+        print("Setting reverb preset to ", preset)
+    end,
+
     TurnOffReverb = function(...) end,
     GetSoundVolume = function(self, ...) end,
     SetSoundVolume = function(...) end,
@@ -308,14 +328,6 @@ TheSim = {
     GetWorkshopVersionCompatible = function(...) end,
     QueryWorkshopModName = function(self, ...) end,
     QueueDownloadTempMod = function(...) end,
-
-    ----------------------------------------------------------------------------
-    -------------------------- DEBUG FUNCTIONS  --------------------------------
-    ----------------------------------------------------------------------------
-
-    DebugPushJsonMessage = function(...) end,
-    ShouldInitDebugger = function(...) end,
-
     
     ----------------------------------------------------------------------------
     ------------------------- MEMORY FUNCTIONS  --------------------------------
