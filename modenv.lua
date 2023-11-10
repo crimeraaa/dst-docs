@@ -48,7 +48,7 @@ Lua Language Server annotations, that's it :)
 -- See `env.AddAction` (`scripts/modutil.lua:442`) for full implementation.
 ---@param id string Key into `_G.ACTIONS`.
 ---@param str string Display when action is ready to be used.
----@param fn function What the action does exactly.
+---@param fn fun(act:table):any What the action does exactly.
 function AddAction(id, str, fn)
     print(
         "[Mod Action ID]:", id, 
@@ -57,18 +57,23 @@ function AddAction(id, str, fn)
     )
 end
 
-
----@param name string Filename, no extension of the original sound.
----@param new_name string Filename, no extension of the replacement sound.
+---@param name string Filename, no extension, of the original sound.
+---@param new_name string Filename, no extension, of the replacement sound.
 function RemapSoundEvent(name, new_name)
     print("Replacing sound", name, "with", new_name)
 end
-
 
 --------------------------------------------------------------------------------
 ------------------------- POST INITIALIZATION FUNCTIONS ------------------------
 --------------------------------------------------------------------------------
 
+-- Runs the function `fn` after the world(?) has been loaded.
+--
+-- Note: perhaps "world" is the wrong word to use here.
+---@param fn fun()
+function AddSimPostInit(fn)
+    print("Applying", fn, "to TheSim.")
+end
 
 -- ### Modding Environment
 -- Applies `fn` to every single prefab to has been and will ever be.
@@ -108,9 +113,9 @@ end
 --
 -- See `env.AddComponentPostInit` (`scripts/modutil.lua:567`) for implementation details.
 ---@param component string Name as seen in the Lua scripts, e.g. `"playeractionpicker"`.
----@param fn function Function called on post initialization for this component.
+---@param fn fun(self:table, inst?:table) Modifies the component (`self`) directly.
 function AddComponentPostInit(component, fn)
-    printf("[Component]:", component, "[Post-init Function]:", fn)
+    print("[Component]:", component, "[Post-init Function]:", fn)
 end
 
 

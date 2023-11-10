@@ -11,3 +11,6 @@ discord-help/
 
 # This is a symlink to my V1 mods folder. Commiting it won't help anybody.
 v1-mods
+
+# My VSCode workspace configs, specific to my laptop.
+.vscode/
