@@ -20,6 +20,12 @@
 ---@type "release"|"dev"|"staging"
 BRANCH = "release"
 
+-- I believe this refers to the ingame console where you can use commands.
+-- It's possible to disable the console if I remember.
+-- 
+-- Default is the boolean `true`.
+CONSOLE_ENABLED = true
+
 -- Based on testing, my own installation has this set to `"PRODUCTION"`.
 --
 -- If there are other possible values, I've yet to see them, All the scripts that

@@ -107,8 +107,8 @@ os = {
 --
 --------------------------------------------------------------------------------
 
-
----- GLOBAL ENGINE FUNCTIONS ---------------------------------------------------
+--------------------------------------------------------------------------------
+---------------------------- GLOBAL ENGINE FUNCTIONS ---------------------------
 -- TODO figure these out...
 -- These functions are not part of any Lua standard libary, so I'm assuming that 
 -- most (if not all!) of everything from this point on are Klei specific functions.
@@ -121,7 +121,7 @@ os = {
 -- See `scripts/main.lua`, `scripts/mods.lua`, `scripts/modindex.lua`
 -- for sample usages.
 ---@param filepath string
-kleiloadlua = function(filepath, ...) 
+function kleiloadlua(filepath, ...) 
     return function()
         print("Loading", filepath)
     end
@@ -129,10 +129,15 @@ end
 
 -- See `kleiloadlua` in `engine-functions.lua`, it seems similar.
 ---@param filepath string
-kleifileexists = function(filepath, ...) 
+function kleifileexists(filepath, ...) 
     print("Checking if", filepath, "exists...")
     return true
 end
+
+--------------------------------------------------------------------------------
+--------------------------- UTF-8 CHARACTER ENCODING ---------------------------
+--------------------------------------------------------------------------------
+
 tracked_assert = function(...) print('function: 0000000010622F50') end
 string_search_subwords = function(...) print('function: 0000000010626F10') end
 
@@ -142,22 +147,67 @@ utf8strlen = function(...) print('function: 0000000010626A90') end
 utf8strtolower = function(...) print('function: 0000000010626B50') end
 utf8substr = function(...) print('function: 0000000010626D60') end
 
--- be funny if this wasn literally just `function() return {} end`
-createTable = function(...) print('function: 0000000010626AC0') end
+-- Converts `value` to the appropriate character. 
+-- 
+-- Seems to be using Unicode as we can go beyond 8-bits signed or unsigned.
+---@param value integer
+function utf8char(value) 
+    return string.char(value)
+end
+
+-- be funny if this was literally just `function() return {} end`
+-- 
+-- Update: upon further testing, I think this IS literally just that LMAO
+createTable = function() 
+    return {}
+end
+
 walltime = function(...) print('function: 00000000106265B0') end
 requireeventfile = function(...) print('function: 0000000010626C70') end
-toarray = function(...) print('function: 0000000010626C10') end
-toarrayornil = function(...) print('function: 0000000010627000') end
+
+-- Returns your varargs as an array. That's it, you can index into it using 
+-- the exact order you passed them in.
+---```lua
+---local t = toarray(1,2,3,"Hi mom")
+-----is the same as
+---local t = {1, 2, 3, "Hi mom"}
+---```
+-- Note that even if no arguments are passed, this still creates a table.
+function toarray(...) 
+    return {...}
+end
+
+-- Same as `toarray` except that if there are no arguments, it returns `nil`
+-- rather than an empty table.
+function toarrayornil(arg1, ...)
+    if not arg1 then
+        return nil
+    end
+    return {arg1, ...}
+end
 perlin = function(...) print('function: 0000000010626940') end
 anglediff = function(...) print('function: 0000000010626E80') end
-smallhash = function(...) print('function: 0000000010626880') end
 newproxy = function(...) print('function: 0000000007460FE0') end
 VisitURL = function(...) print('function: 0000000010626CD0') end
-hash = function(...) print('function: 0000000010626A00') end
-utf8char = function(...) print('function: 0000000010626BE0') end
 
+-- Hashes `plaintext` using... some algorithm. I'm not sure what it is.
+-- The hashed value is a number.
+---@param plaintext string
+function hash(plaintext) 
+    print("Hashing", plaintext)
+    return 1203902
+end
 
----- GLOBAL ENGINE TABLES ------------------------------------------------------
+-- Exact same as `hash`, I'm unsure what could be the differences internally.
+-- Maybe a different algorithm?
+---@param plaintext string
+function smallhash(plaintext) 
+    print("Small hashing", plaintext)
+    return 38423954
+end
+
+--------------------------------------------------------------------------------
+----------------------------- GLOBAL ENGINE TABLES -----------------------------
 -- TODO figure these out...
 -- In a similar vein to the Lua standard libaries, Klei exposes some C functions 
 -- into global environment Lua tables.
@@ -447,12 +497,21 @@ TwitchOptions = {
 -- Contains all tables that have "The" in them but are also less than
 -- 100 (non blank) lines of code.
 
+---@class TheSystemService
 TheSystemService = {
     StopDedicatedServers = function(...) end,
     IsStorageAvailable = function(...) end,
     StartDedicatedServers = function(...) end,
     AdjustDisplaySafeArea = function(...) end,
-    EnableStorage = function(...) end,
+
+    -- Currently unsure what this does.
+    -- 
+    -- See `c_shutdown` (`scripts/consolecommands.lua:192`).
+    ---@param self TheSystemService
+    ---@param autosave boolean
+    EnableStorage = function(self, autosave) 
+
+    end,
     DidBugReportSucceed = function(...) end,
     EnableAutosave = function(...) end,
     PrepareStorage = function(...) end,
@@ -464,7 +523,11 @@ TheSystemService = {
     IsDisplaySafeAreaAdjusted = function(...) end,
     GetLastOperation = function(...) end,
     IsBugReportRunning = function(...) end,
-    IsAutosaveEnabled = function(...) end,
+
+    -- Seems default is true. I wonder how this could return false?
+    -- 
+    -- See `local function cancel` (`scripts/frontend.lua:1321`).
+    IsAutosaveEnabled = function(self) return true end,
     HasFocus = function(...) end,
     OverwriteStorage = function(...) end,
     SetStalling = function(...) end,
@@ -541,20 +604,6 @@ TheInventory = {
     GetOwnedItemCountForCommerce = function(...) end,
     AddSkinSetInput = function(...) end
 }
-
-TheShard = {
-    IsPlayer = function(...) end,
-    IsMigrating = function(...) end,
-    IsSecondary = function(...) end,
-    SetSecondaryLoading = function(...) end,
-    IsMaster = function(...) end,
-    GetDefaultShardEnabled = function(...) end,
-    StartMigration = function(...) end,
-    GetSecondaryShardPlayerCounts = function(...) end,
-    GetShardId = function(...) end
-}
-
-
 
 -- ? Seems to not be referenced anywhere at all.
 -- TheLeaderboards = {}
